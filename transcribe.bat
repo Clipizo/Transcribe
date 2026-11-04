@@ -1,7 +1,7 @@
 @echo off
 rem Transcribe for Windows.
 rem   Double-click: opens the menu.
-rem   In a terminal in this folder:  .\transcribe my-video.mp4   (see .\transcribe help)
+rem   In PowerShell in this folder:  ./transcribe my-video.mp4   (see ./transcribe help)
 setlocal
 chcp 65001 >nul
 set "KIT=%~dp0"

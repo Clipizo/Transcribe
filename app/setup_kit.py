@@ -45,6 +45,7 @@ MODEL_LABEL = "Qwen3-ASR"
 SIZE_KEY = "asr_size"
 LAUNCHER_WINDOWS = "transcribe.bat"
 LAUNCHER_UNIX = "transcribe.sh"
+LAUNCHER_SHORTCUT = "transcribe"                 # ./transcribe on Mac and Linux
 FIRST_USE = "transcribe a file right away:  {cmd} my-video.mp4"
 
 
@@ -370,6 +371,23 @@ def make_settings(info: dict, p: dict, index: str) -> dict:
     return s
 
 
+def make_shortcut() -> None:
+    """On Mac and Linux, add ./transcribe (a link to transcribe.sh), so the command is the same as on Windows."""
+    if C.IS_WINDOWS:
+        return
+    link = C.KIT / LAUNCHER_SHORTCUT
+    try:
+        if link.is_symlink():
+            if os.readlink(link) == LAUNCHER_UNIX:
+                return
+            link.unlink()
+        elif link.exists():
+            return  # a real file with that name: leave it alone
+        os.symlink(LAUNCHER_UNIX, link)
+    except OSError:
+        pass
+
+
 def describe(info: dict) -> None:
     log(f"  System:     {info['os']} {info['os_version']} ({info['machine']})")
     if info.get("ram_gb"):
@@ -470,6 +488,7 @@ def main() -> int:
                     os.chmod(C.KIT / f, 0o755)
                 except OSError:
                     pass
+            make_shortcut()
         for d in (C.OUTPUT, C.MODELS):
             d.mkdir(exist_ok=True)
 
@@ -505,7 +524,7 @@ def main() -> int:
         log(f"Start it: double-click  {LAUNCHER_WINDOWS}  in this folder.")
         log("Or, in a terminal in this folder, " + FIRST_USE.format(cmd=C.launcher_command()))
     else:
-        log(f"Start it from Terminal, in this folder:  ./{LAUNCHER_UNIX}")
+        log(f"Start it from Terminal, in this folder:  {C.launcher_command()}")
         log("Or " + FIRST_USE.format(cmd=C.launcher_command()))
     if settings["device"] == "cpu":
         log("")

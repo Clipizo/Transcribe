@@ -59,11 +59,11 @@ Copy each command into the window, press Enter, and wait until it finishes befor
    ```
 5. Install. It shows its progress in 4 steps and ends with **Transcribe is installed!** When it asks whether to download the models now, press Enter for yes.
    ```powershell
-   .\install-windows.bat
+   ./install-windows.bat
    ```
 6. Start Transcribe:
    ```powershell
-   .\transcribe
+   ./transcribe
    ```
 
 Prefer clicking? Click the green **Code** button on this page > **Download ZIP**. Right-click the ZIP > **Extract All...**, extract it to `C:\` and rename the folder to `C:\Transcribe`. Then double-click `install-windows.bat` to install, and `transcribe.bat` to start. If Windows says *"Windows protected your PC"*, click **More info** > **Run anyway**.
@@ -93,7 +93,7 @@ Prefer clicking? Click the green **Code** button on this page > **Download ZIP**
    ```
 7. Start Transcribe:
    ```bash
-   ./transcribe.sh
+   ./transcribe
    ```
 
 #### Linux
@@ -112,12 +112,15 @@ Prefer clicking? Click the green **Code** button on this page > **Download ZIP**
    ```
 4. Start Transcribe:
    ```bash
-   ./transcribe.sh
+   ./transcribe
    ```
 
 No `git`? Use the Mac commands (with `curl` and `unzip`) instead.
 
-**Next time,** start it the same way. Windows: double-click `transcribe.bat` in `C:\Transcribe`, or run `cd C:\Transcribe` and then `.\transcribe` in PowerShell. Mac and Linux: run `cd ~/Transcribe` and then `./transcribe.sh` in Terminal.
+**To start it again later:**
+
+- **Windows:** double-click `transcribe.bat` in the `C:\Transcribe` folder.
+- **Mac and Linux:** in Terminal, run `cd ~/Transcribe` and then `./transcribe`.
 
 ## Using Transcribe
 
@@ -129,21 +132,22 @@ Transcribe starts with a simple menu. Type a number and press Enter, then drag y
 
 ### Or use commands
 
-In PowerShell in `C:\Transcribe` (Mac and Linux: in Terminal in `~/Transcribe`, writing `./transcribe.sh` instead of `.\transcribe`):
+You can also skip the menu and type a command. Open PowerShell (Windows) or Terminal (Mac and Linux), go into the Transcribe folder as in the install steps, and type one of these. The commands are the same on every system.
 
 | What | Command |
 |---|---|
-| Text and subtitles of a video | `.\transcribe my-video.mp4` |
-| Text only (faster) | `.\transcribe interview.mp3 --no-subtitles` |
-| Help with names and terms | `.\transcribe podcast.mp3 --hint "Clipizo, DaVinci Resolve"` |
-| Force the language | `.\transcribe lecture.m4a --language Spanish` |
-| Subtitles with your script's exact words | `.\transcribe voiceover.wav --script my-script.txt` |
-| Short lines for vertical videos | `.\transcribe short.mp4 --max-chars 20` |
-| Several files | `.\transcribe part1.mp4 part2.mp4 part3.mp4` |
-| The browser app | `.\transcribe app` |
-| Check the setup | `.\transcribe check` |
+| Text and subtitles of a video | `./transcribe my-video.mp4` |
+| Text only (faster) | `./transcribe interview.mp3 --no-subtitles` |
+| Help with names and terms | `./transcribe podcast.mp3 --hint "Clipizo, DaVinci Resolve"` |
+| Force the language | `./transcribe lecture.m4a --language Spanish` |
+| Subtitles with your script's exact words | `./transcribe voiceover.wav --script my-script.txt` |
+| Short lines for vertical videos | `./transcribe short.mp4 --max-chars 20` |
+| Several files | `./transcribe part1.mp4 part2.mp4 part3.mp4` |
+| A file name with spaces (use quote marks) | `./transcribe "my holiday video.mp4"` |
+| The browser app | `./transcribe app` |
+| Check the setup | `./transcribe check` |
 
-`.\transcribe help` lists every option. File names with spaces need quote marks: `.\transcribe "my holiday video.mp4"`.
+`./transcribe help` lists every option.
 
 ## What you get
 
@@ -167,7 +171,7 @@ Transcribe picks the best settings for your computer automatically. `--quality f
 | File or folder | Contents |
 |---|---|
 | `install-windows.bat`, `install.sh` | The installers. Run them again at any time to repair the install. |
-| `transcribe.bat`, `transcribe.sh` | Start Transcribe (menu or commands). |
+| `transcribe.bat`, `transcribe.sh` | Start Transcribe (menu or commands). On Mac and Linux the installer also adds a `transcribe` shortcut, so `./transcribe` works everywhere. |
 | `Transcribe AI Guide.md` | Everything an AI assistant needs to help you, step by step, including troubleshooting. |
 | `AGENTS.md`, `SKILL.md` | Instructions for AI agents. `CLAUDE.md` and `GEMINI.md` point to them. |
 | `app/` | The Transcribe program. |

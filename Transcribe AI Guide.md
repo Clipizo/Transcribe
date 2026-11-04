@@ -23,20 +23,14 @@ You are helping someone who may never have used a terminal. Transcribe is a kit 
    - whether it has an NVIDIA graphics card (if they don't know, section 2 explains how to check);
    - what they want: a transcript, subtitles, or subtitles for a script they already have.
 2. **Give one step at a time,** with the exact clicks or the exact command in a code block. Wait for them to say it worked before the next step. Tell them what they should see.
-3. **When something fails,** ask them to paste the text from the window, find the problem in the troubleshooting table (section 8) and give the fix. `transcribe check` (section 4) shows the state of the install. After an error, Transcribe also writes the technical details to `last-error.txt` in its folder; ask for that file if you need more.
+3. **When something fails,** ask them to paste the text from the window, find the problem in the troubleshooting table (section 8) and give the fix. `./transcribe check` (section 4) shows the state of the install. After an error, Transcribe also writes the technical details to `last-error.txt` in its folder; ask for that file if you need more.
 4. **Never send them to install things by hand** (Python, pip, conda, PyTorch, CUDA, ffmpeg). The installer does all of it inside the Transcribe folder. To repair anything, run the installer again (section 2), with `--repair` if needed.
 5. **Explain where the results are** (the `output` folder) and how to use them, for example how to put subtitles in their video editor (section 6).
 6. If you can run commands on their computer yourself (an AI agent), also follow `SKILL.md`.
 
-**How to write commands for each system.** In this guide, `transcribe` stands for:
+**Commands are the same on every system.** They start with `./transcribe` and are typed in **PowerShell** on Windows or in **Terminal** on Mac and Linux, inside the Transcribe folder. On Windows, `./transcribe` runs `transcribe.bat`; on Mac and Linux it runs `transcribe.sh` (the installer adds the `./transcribe` shortcut). Only in the old Windows Command Prompt, type `transcribe` without `./`.
 
-| System | Write | Example |
-|---|---|---|
-| Windows, PowerShell or Windows Terminal (the default) | `.\transcribe` | `.\transcribe my-video.mp4` |
-| Windows, Command Prompt (cmd) | `transcribe` | `transcribe my-video.mp4` |
-| Mac and Linux (Terminal) | `./transcribe.sh` | `./transcribe.sh my-video.mp4` |
-
-The terminal must be **in the Transcribe folder** (section 4 explains how). File names with spaces need quote marks: `.\transcribe "my holiday video.mp4"`. Dragging the file into the terminal window adds them automatically.
+The terminal must be **in the Transcribe folder** (section 4 explains how). File names with spaces need quote marks: `./transcribe "my holiday video.mp4"`. Dragging the file into the terminal window adds them automatically.
 
 ---
 
@@ -44,10 +38,10 @@ The terminal must be **in the Transcribe folder** (section 4 explains how). File
 
 | Feature | Command | Model |
 |---|---|---|
-| Text of a recording | `transcribe FILE --no-subtitles` | Qwen3-ASR (0.6B or 1.7B) |
-| Text and subtitles | `transcribe FILE` | Qwen3-ASR, plus Qwen3-ForcedAligner-0.6B for the timings |
-| Subtitles with the exact words of a script | `transcribe FILE --script SCRIPT.txt` | Qwen3-ForcedAligner-0.6B (plus Qwen3-ASR for recordings over 3 minutes) |
-| Browser app | `transcribe app` | the official Qwen demo app |
+| Text of a recording | `./transcribe FILE --no-subtitles` | Qwen3-ASR (0.6B or 1.7B) |
+| Text and subtitles | `./transcribe FILE` | Qwen3-ASR, plus Qwen3-ForcedAligner-0.6B for the timings |
+| Subtitles with the exact words of a script | `./transcribe FILE --script SCRIPT.txt` | Qwen3-ForcedAligner-0.6B (plus Qwen3-ASR for recordings over 3 minutes) |
+| Browser app | `./transcribe app` | the official Qwen demo app |
 
 - Everything runs on the user's computer. Nothing is uploaded; there is no account and no cost.
 - The models download automatically the first time they're needed (about 4 to 7 GB in total, once).
@@ -88,7 +82,7 @@ Each command goes into **PowerShell** (press the Windows key, type `PowerShell`,
    ```
 4. Install:
    ```powershell
-   .\install-windows.bat
+   ./install-windows.bat
    ```
    - It shows the progress in 4 steps. The PyTorch download (about 3 GB with an NVIDIA card) can take 5 to 20 minutes and may look stuck; it isn't.
    - **Don't click inside the window:** that pauses it (the title then starts with "Select"). If that happens, press Esc.
@@ -96,7 +90,7 @@ Each command goes into **PowerShell** (press the Windows key, type `PowerShell`,
    - **Done** when it says **Transcribe is installed!**, followed by "Press any key to continue": press a key.
 5. Start Transcribe:
    ```powershell
-   .\transcribe
+   ./transcribe
    ```
 
 **Without commands:** on the GitHub page, click **Code** > **Download ZIP**. Right-click the ZIP > **Extract All...**, extract it to `C:\`, rename `C:\Transcribe-main` to `C:\Transcribe`, then double-click `install-windows.bat` and later `transcribe.bat`. If Windows shows *"Windows protected your PC"*, click **More info** > **Run anyway**; if it asks *"Do you want to run this file?"*, click **Run**. Don't run anything from inside the ZIP without extracting it.
@@ -133,7 +127,7 @@ Each command goes into **Terminal** (press Cmd+Space, type `Terminal`, press Ent
    ```
 6. Start Transcribe:
    ```bash
-   ./transcribe.sh
+   ./transcribe
    ```
 
 If `mv` says `Transcribe` already exists, Transcribe was downloaded before: use the existing `~/Transcribe` folder.
@@ -150,15 +144,15 @@ cd ~/Transcribe
 bash install.sh
 ```
 ```bash
-./transcribe.sh
+./transcribe
 ```
 
 For NVIDIA graphics, the NVIDIA driver must be installed (`nvidia-smi` should work). Without `git`, use the Mac commands (`curl` and `unzip`).
 
 ### Starting it next time
 
-- **Windows:** double-click `transcribe.bat` in `C:\Transcribe`, or in PowerShell run `cd C:\Transcribe` and then `.\transcribe`.
-- **Mac and Linux:** in Terminal, run `cd ~/Transcribe` and then `./transcribe.sh`.
+- **Windows:** double-click `transcribe.bat` in `C:\Transcribe`, or in PowerShell run `cd C:\Transcribe` and then `./transcribe`.
+- **Mac and Linux:** in Terminal, run `cd ~/Transcribe` and then `./transcribe`.
 
 ### Installer options
 
@@ -175,7 +169,7 @@ Running the installer again is always safe: it skips what is already done. Each 
 
 ## 3. The menu (easiest)
 
-**Windows:** double-click `transcribe.bat`. **Mac/Linux:** in Terminal, in the Transcribe folder, run `./transcribe.sh`.
+**Windows:** double-click `transcribe.bat`. **Mac/Linux:** in Terminal, in the Transcribe folder, run `./transcribe`.
 
 ```
   1  Transcribe audio or video (text + subtitles)
@@ -203,7 +197,7 @@ The user types a number and presses Enter:
 **All commands:**
 
 ```
-transcribe FILE [FILE...]             audio or video to text and subtitles
+./transcribe FILE [FILE...]           audio or video to text and subtitles
     --language NAME     force the language (normally detected)
     --no-subtitles      text only (faster)
     --hint "WORDS"      names and terms to expect, e.g. "Clipizo, DaVinci Resolve"
@@ -213,10 +207,10 @@ transcribe FILE [FILE...]             audio or video to text and subtitles
     --quality fast|best fast = 0.6B model, best = 1.7B model (default: chosen for your computer)
     --out PATH          where to save, without extension (default: the output folder)
 
-transcribe app                        open the official Qwen web app in the browser
-transcribe download [text|subtitles|all]   download the models now
-transcribe check                      check that everything works
-transcribe help                       show the commands
+./transcribe app                      open the official Qwen web app in the browser
+./transcribe download [text|subtitles|all]   download the models now
+./transcribe check                    check that everything works
+./transcribe help                     show the commands
 ```
 
 Transcribing also accepts `--device cpu` (to avoid the graphics card) and `--precision float32` (for problems on older graphics cards). `--out` and `--script` work with one file at a time.
@@ -226,10 +220,10 @@ Transcribing also accepts `--device cpu` (to avoid the graphics card) and `--pre
 ## 5. Transcripts and subtitles
 
 ```
-transcribe interview.mp3
-transcribe my-video.mp4 --hint "Clipizo, DaVinci Resolve"
-transcribe podcast.wav --language Spanish --no-subtitles
-transcribe vertical-short.mp4 --max-chars 20
+./transcribe interview.mp3
+./transcribe my-video.mp4 --hint "Clipizo, DaVinci Resolve"
+./transcribe podcast.wav --language Spanish --no-subtitles
+./transcribe vertical-short.mp4 --max-chars 20
 ```
 
 - **Files:** almost any audio or video: mp3, wav, m4a, aac, flac, ogg, mp4, mov, mkv, webm...
@@ -243,12 +237,12 @@ transcribe vertical-short.mp4 --max-chars 20
 When the words are known, for example for a voiceover read from a script, the subtitles can use them exactly instead of what the model heard:
 
 ```
-transcribe voiceover.wav --script my-script.txt
+./transcribe voiceover.wav --script my-script.txt
 ```
 
 - The script must be what is spoken, in the same order. Markdown marks (`#`, `**`, bullets) are removed. Each line of the script starts a new subtitle line.
 - For recordings up to about 3 minutes, Transcribe only times the words. For longer ones, it first listens to find where each part of the script is spoken, so small differences between the script and the recording are fine.
-- **With AIvoice:** AIvoice saves the text of each voiceover next to it, so `transcribe output/my-script.wav --script output/my-script.txt` (run from the Transcribe folder, with the full paths to the AIvoice files) gives perfect subtitles.
+- **With AIvoice:** AIvoice saves the text of each voiceover next to it, so `./transcribe output/my-script.wav --script output/my-script.txt` (run from the Transcribe folder, with the full paths to the AIvoice files) gives perfect subtitles.
 
 ## 6. Subtitles in video editors
 
@@ -264,7 +258,7 @@ The editor's menus may differ by version; the help of each program explains its 
 ## 7. The web app
 
 ```
-transcribe app
+./transcribe app
 ```
 
 This is the official Qwen demo app, with timestamps. The browser opens by itself when the app is ready (loading the models can take a minute; the first time, it also downloads them). Keep the terminal window open while using it; press Ctrl+C there to stop. The app only runs on this computer (`127.0.0.1`); it isn't visible on the network. For long recordings, subtitles files and scripts, use the command or the menu.
@@ -282,8 +276,8 @@ This is the official Qwen demo app, with timestamps. The browser opens by itself
 | "Transcribe isn't installed yet" | Run the installer (section 2). If it ran, look at the end of its window or `install-log.txt` for the error. |
 | The folder was moved or renamed after installing | Run the installer again (it rebuilds what broke), or with `--repair`. |
 | "This Mac has an Intel processor" | Intel Macs can't run Transcribe. Use a Mac with Apple Silicon, or a Windows or Linux PC. |
-| Mac: "permission denied" for `./transcribe.sh` | Run `bash transcribe.sh` instead, or run the installer again (it fixes the permission). |
-| `transcribe check` says "processor only" on a PC with an NVIDIA card | Update the NVIDIA driver (from nvidia.com or the NVIDIA App), restart the computer, then run the installer again. |
+| Mac: "permission denied" for `./transcribe` | Run `bash transcribe.sh` instead, or run the installer again (it fixes the permission). |
+| `./transcribe check` says "processor only" on a PC with an NVIDIA card | Update the NVIDIA driver (from nvidia.com or the NVIDIA App), restart the computer, then run the installer again. |
 | "no kernel image is available" or "CUDA capability" errors | Older NVIDIA card: run the installer with `--torch cu126`. |
 | "out of memory" | Close other programs (games, video editors, many browser tabs) and add `--quality fast`. |
 | The model download fails or is very slow | Check the internet and run the command again: downloads continue where they stopped. If `huggingface.co` is blocked, see section 9. |
@@ -295,8 +289,8 @@ This is the official Qwen demo app, with timestamps. The browser opens by itself
 | Subtitles are a little early or late in one place | Usually a long silence, music or background noise. Shorter files, or a cleaner recording, help. |
 | The error mentions "nan" or "inf" | Add `--precision float32` (common on older NVIDIA cards). |
 | A Mac error mentioning "MPS" | Add `--device cpu` (slower, but always works). |
-| `transcribe app` doesn't open the browser | Open the address it prints (for example `http://127.0.0.1:7860`) yourself. |
-| Anything else | Run `transcribe check` and paste its output, plus the error text or `last-error.txt`, to your AI assistant. |
+| `./transcribe app` doesn't open the browser | Open the address it prints (for example `http://127.0.0.1:7860`) yourself. |
+| Anything else | Run `./transcribe check` and paste its output, plus the error text or `last-error.txt`, to your AI assistant. |
 
 ## 9. Downloading models manually
 

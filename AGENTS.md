@@ -6,6 +6,6 @@ When the user asks to install or fix Transcribe, transcribe a recording, or make
 
 Ground rules:
 
-- Run Transcribe through its launcher: `.\transcribe` on Windows, `./transcribe.sh` on Mac and Linux. Install or repair it only with `install-windows.bat` or `install.sh`; don't install packages yourself.
+- Run Transcribe through its launcher, `./transcribe` (on Windows it runs `transcribe.bat`, on Mac and Linux `transcribe.sh`). Install or repair it only with `install-windows.bat` or `install.sh`; don't install packages yourself.
 - Keep the user's results in `output/`. Don't delete or overwrite their files without asking.
 - Leave the kit files unchanged unless the user asks: `app/`, the installers, the docs, `SKILL.md`.

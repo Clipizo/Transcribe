@@ -3,6 +3,7 @@
 envs/
 models/
 install-log.txt
+/transcribe
 last-error.txt
 
 # Your own files stay out of the kit

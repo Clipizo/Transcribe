@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Transcribe for Mac and Linux.
-#   ./transcribe.sh                 opens the menu
-#   ./transcribe.sh my-video.mp4    see ./transcribe.sh help for all options
+#   ./transcribe                    opens the menu (the installer adds this shortcut to transcribe.sh)
+#   ./transcribe my-video.mp4       see ./transcribe help for all options
 KIT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PY="$KIT/envs/asr/bin/python"
 if [ ! -x "$PY" ]; then

@@ -21,6 +21,5 @@
 <text x="96" y="332" fill="#E2E8F0">Download the models now (so nothing downloads later)</text>
 <text x="60" y="362" fill="#5EEAD4" font-weight="700">0</text>
 <text x="96" y="362" fill="#E2E8F0">Exit</text>
-<text x="36" y="422" fill="#E2E8F0">Type a number and press Enter: <tspan fill="#5EEAD4" font-weight="700">1</tspan></text>
-<rect x="424" y="404" width="12" height="24" fill="#5EEAD4" opacity="0.8"/>
+<text x="36" y="422" fill="#E2E8F0">Type a number and press Enter: <tspan fill="#5EEAD4" font-weight="700">1</tspan><tspan fill="#5EEAD4" fill-opacity="0.75">█</tspan></text>
 </g></svg>

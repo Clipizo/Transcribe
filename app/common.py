@@ -44,7 +44,9 @@ def env_python(name: str = ENV_NAME) -> Path:
 
 def launcher_command() -> str:
     """How the user starts Transcribe from a terminal on this computer."""
-    return ".\\transcribe" if IS_WINDOWS else "./transcribe.sh"
+    # PowerShell on Windows accepts ./transcribe (it runs transcribe.bat); on Mac and Linux the
+    # installer adds a ./transcribe shortcut to transcribe.sh. So the command is the same everywhere.
+    return "./transcribe"
 
 
 # ---------------------------------------------------------------------------

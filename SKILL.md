@@ -16,16 +16,14 @@ You run **Transcribe** for the user on their own computer. It wraps the official
   - troubleshooting (section 8).
 
   This file only adds the workflow for agents that can run commands.
-- **Run commands from the Transcribe folder** (the folder with this file):
-  - Windows PowerShell: `.\transcribe ...` (Command Prompt: `transcribe ...`)
-  - Mac and Linux: `./transcribe.sh ...`
+- **Run commands from the Transcribe folder** (the folder with this file) as `./transcribe ...`. It is the same on every system: in PowerShell on Windows it runs `transcribe.bat`, and on Mac and Linux the installer adds the `./transcribe` shortcut to `transcribe.sh`. If your shell can't run it that way (for example Git Bash or Command Prompt on Windows), run `transcribe.bat` on Windows or `bash transcribe.sh` on Mac and Linux, with the same arguments.
 
-  Below, `transcribe` means the right form for the user's system.
+  Below, `transcribe` means `./transcribe`.
 
 ## Workflow
 
 1. **Check the install.** If `envs/settings.json` exists, run `transcribe check` and fix anything it reports. Otherwise install:
-   - Windows: `.\install-windows.bat --yes` (Command Prompt: `install-windows.bat --yes`)
+   - Windows: `./install-windows.bat --yes` in PowerShell (Command Prompt: `install-windows.bat --yes`)
    - Mac and Linux: `bash install.sh --yes`
 
    The install takes 5 to 30 minutes and downloads about 3 GB with an NVIDIA card (Mac: well under 1 GB). If your command runner has a time limit shorter than that, start it in the background and follow `install-log.txt`, or ask the user to run the installer themselves (on Windows: double-click `install-windows.bat`). Then run `transcribe check`.
