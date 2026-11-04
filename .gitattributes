@@ -1,0 +1,4 @@
+# Windows batch files keep Windows line endings in every download.
+*.bat -text
+# Shell scripts must keep Unix line endings.
+*.sh text eol=lf

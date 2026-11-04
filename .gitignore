@@ -1,0 +1,19 @@
+# Installed by the installer (big, and specific to each computer)
+.tools/
+envs/
+models/
+install-log.txt
+last-error.txt
+
+# Your own files stay out of the kit
+output/*
+!output/README.md
+
+# Python
+__pycache__/
+*.pyc
+
+# Operating systems
+.DS_Store
+Thumbs.db
+desktop.ini

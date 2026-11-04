@@ -1,0 +1,22 @@
+Clipizo product license
+
+This product (Transcribe) is made by Clipizo (https://clipizo.com). It is free of charge, but it is licensed to you, not
+sold. You may install and use it in your own projects, personal or commercial, including client work and published or
+monetized videos. What you make with it, such as transcripts and subtitles, is yours to use.
+
+NO REDISTRIBUTION. You may not share, re-upload, redistribute, resell, rent or sublicense its files, on their own
+or as part of another pack, product or download, whether modified or not. Being free of charge does not make it
+free to redistribute. To recommend it, link to its page (https://github.com/Clipizo/Transcribe or clipizo.com).
+
+NO REVERSE ENGINEERING. You may not reverse engineer, decompile, disassemble, decrypt or unpack it, try to extract
+its source code, protected modules or assets, or reuse its code in another product.
+
+THIRD-PARTY SOFTWARE. Transcribe downloads and runs third-party software and AI models, such as Qwen3-ASR
+(Apache License 2.0, by Alibaba Cloud), PyTorch and other open-source packages. They are not part of this
+product and this license does not cover them: each comes from its official source under its own license. See
+THIRD-PARTY-NOTICES.md.
+
+Activities permitted by mandatory law, including applicable software interoperability rights, are not prohibited.
+
+Full terms: https://clipizo.com/terms#license
+Copyright (c) 2026 Clipizo. All rights reserved.
