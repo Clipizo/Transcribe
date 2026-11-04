@@ -1,72 +1,135 @@
-# Transcribe
+<p align="center">
+  <img src="assets/banner.svg" alt="Transcribe: free transcripts and subtitles, on your own computer" width="100%">
+</p>
 
 Turn **audio and video into text and subtitles** on your own computer, for free. No account, no subscription, no upload limits, and your recordings never leave your computer.
 
-Transcribe is a beginner-friendly kit for **Qwen3-ASR**, the free, open speech-recognition models from the Qwen team:
+Transcribe is a beginner-friendly kit for **Qwen3-ASR**, the free, open speech-recognition models from the Qwen team. It installs everything into one folder, and you use it from a simple menu, with one short command, or through your AI assistant.
 
-- transcripts in 30 languages (and 22 Chinese dialects), from almost any audio or video file;
-- subtitles (`.srt`) with accurate word timings, for DaVinci Resolve, Premiere Pro, CapCut, Final Cut and YouTube;
-- subtitles with the **exact words of your script**, for example for a voiceover.
-
-It installs everything into this one folder. You use it from a simple menu, with one short command, or by letting your AI assistant run it for you.
+<p align="center">
+  <img src="assets/how-it-works.svg" alt="How it works: 1. your audio or video file, 2. Transcribe listens on your own computer, in 30 languages, 3. you get the text, subtitles and word timings" width="100%">
+</p>
 
 > Transcribe is an unofficial kit made by Clipizo. It is not affiliated with or endorsed by Alibaba Cloud or the Qwen team.
 > Want AI voiceovers? See the companion kit **[AIvoice](https://github.com/Clipizo/AIvoice)**.
 
-## The easiest way: ask your AI
+## What you need
 
-Give this to your AI assistant (ChatGPT, Claude, Gemini, Copilot...):
+- **Free disk space: about 15 GB.** The programs take about 7 GB (less without an NVIDIA graphics card). The AI models take about 4 to 7 GB and download the first time you use Transcribe.
+- **A computer:** a Windows 10 or 11 PC, a Mac with Apple Silicon (M1 or newer), or a Linux PC. Intel Macs and Windows on ARM aren't supported.
+- **A graphics card (optional):** with an NVIDIA graphics card (6 GB or more; 8 GB or more for best quality) or on a Mac it's quick. Without either, it runs on the processor: it works, but long recordings take a while.
+- **An internet connection** for the install (about 3 GB with an NVIDIA card, less without) and the first download of the models.
 
-> Help me install and use Transcribe: https://github.com/Clipizo/Transcribe
-> Read its file "Transcribe AI Guide.md" first, then guide me one step at a time.
+## Installation
 
-If your AI can't open links, download the file **`Transcribe AI Guide.md`** and attach it to the chat instead.
+### The easiest way: let your AI assistant guide you
 
-**AI agents that can open folders and run commands** (Claude Code, OpenAI Codex, Gemini CLI, Cursor, VS Code with Copilot): open this folder in the agent and ask for what you want, for example *"install Transcribe and make subtitles for my-video.mp4"*. The agent follows `AGENTS.md` and `SKILL.md`.
+Paste this into ChatGPT, Claude, Gemini or Copilot:
 
-## Install it yourself
-
-You need about **15 GB of free disk space** and an internet connection. The install takes 5 to 30 minutes.
-
-**Windows 10 or 11**
-
-1. On this page, click the green **Code** button, then **Download ZIP**.
-2. Right-click the ZIP, choose **Extract All...**, and extract it to `C:\`. Rename the folder to `C:\Transcribe` (short paths avoid problems).
-3. Open the folder and double-click **`install-windows.bat`**. If Windows says *"Windows protected your PC"*, click **More info**, then **Run anyway**.
-4. Wait until it says **Transcribe is installed!**
-
-**Mac with Apple Silicon (M1 or newer)**
-
-1. Click **Code**, then **Download ZIP**. Move the unzipped folder to your home folder and rename it `Transcribe`.
-2. Open **Terminal** (press Cmd+Space, type *Terminal*, press Enter).
-3. Type `cd ` (with a space), drag the Transcribe folder into the Terminal window, and press Enter.
-4. Type `bash install.sh` and press Enter.
-
-**Linux**
-
-```bash
-git clone https://github.com/Clipizo/Transcribe.git && cd Transcribe && bash install.sh
+```text
+Help me install and use Transcribe: https://github.com/Clipizo/Transcribe
+Read its file "Transcribe AI Guide.md" first, then guide me one step at a time.
 ```
 
-## Use it
+If your AI can't open links, download [`Transcribe AI Guide.md`](Transcribe%20AI%20Guide.md) and attach it to the chat instead.
 
-**Windows:** double-click **`transcribe.bat`**. **Mac and Linux:** in Terminal, in the Transcribe folder, type `./transcribe.sh`.
+Using an AI agent that can run commands (Claude Code, OpenAI Codex, Gemini CLI, Cursor, VS Code with Copilot)? Open the Transcribe folder in it and ask, for example, *"install Transcribe and make subtitles for my-video.mp4"*. The agent follows `AGENTS.md` and `SKILL.md`.
 
-A menu opens:
+### Install it yourself
 
-```
-  1  Transcribe audio or video (text + subtitles)
-  2  Subtitles from my script (exact words, for example a voiceover)
-  3  Open the web app in your browser
-  4  Check my setup
-  5  Download the models now (so nothing downloads later)
-```
+Copy each command into the window, press Enter, and wait until it finishes before the next one. The whole install takes 5 to 30 minutes, depending on your internet connection.
 
-Drag your file into the window when it asks, and press Enter. The results go to the **`output`** folder. The first time, Transcribe downloads its AI models (about 4 to 7 GB, only once).
+#### Windows 10 or 11
+
+1. Open **PowerShell**: press the Windows key, type `PowerShell`, and press Enter.
+2. Download Transcribe:
+   ```powershell
+   Invoke-WebRequest "https://github.com/Clipizo/Transcribe/archive/refs/heads/main.zip" -OutFile "$env:TEMP\Transcribe.zip"
+   ```
+3. Unpack it to `C:\Transcribe`:
+   ```powershell
+   Expand-Archive "$env:TEMP\Transcribe.zip" -DestinationPath "C:\"
+   ```
+   ```powershell
+   Rename-Item "C:\Transcribe-main" "Transcribe"
+   ```
+4. Go into the folder:
+   ```powershell
+   cd C:\Transcribe
+   ```
+5. Install. It shows its progress in 4 steps and ends with **Transcribe is installed!** When it asks whether to download the models now, press Enter for yes.
+   ```powershell
+   .\install-windows.bat
+   ```
+6. Start Transcribe:
+   ```powershell
+   .\transcribe
+   ```
+
+Prefer clicking? Click the green **Code** button on this page > **Download ZIP**. Right-click the ZIP > **Extract All...**, extract it to `C:\` and rename the folder to `C:\Transcribe`. Then double-click `install-windows.bat` to install, and `transcribe.bat` to start. If Windows says *"Windows protected your PC"*, click **More info** > **Run anyway**.
+
+#### Mac (Apple Silicon)
+
+1. Open **Terminal**: press Cmd+Space, type `Terminal`, and press Enter.
+2. Go to your home folder:
+   ```bash
+   cd ~
+   ```
+3. Download Transcribe:
+   ```bash
+   curl -L -o Transcribe.zip https://github.com/Clipizo/Transcribe/archive/refs/heads/main.zip
+   ```
+4. Unpack it to `Transcribe` in your home folder:
+   ```bash
+   unzip -q Transcribe.zip && mv Transcribe-main Transcribe && rm Transcribe.zip
+   ```
+5. Go into the folder:
+   ```bash
+   cd ~/Transcribe
+   ```
+6. Install. It shows its progress in 4 steps and ends with **Transcribe is installed!** When it asks whether to download the models now, press Enter for yes.
+   ```bash
+   bash install.sh
+   ```
+7. Start Transcribe:
+   ```bash
+   ./transcribe.sh
+   ```
+
+#### Linux
+
+1. Download Transcribe into your home folder:
+   ```bash
+   git clone https://github.com/Clipizo/Transcribe.git ~/Transcribe
+   ```
+2. Go into the folder:
+   ```bash
+   cd ~/Transcribe
+   ```
+3. Install:
+   ```bash
+   bash install.sh
+   ```
+4. Start Transcribe:
+   ```bash
+   ./transcribe.sh
+   ```
+
+No `git`? Use the Mac commands (with `curl` and `unzip`) instead.
+
+**Next time,** start it the same way. Windows: double-click `transcribe.bat` in `C:\Transcribe`, or run `cd C:\Transcribe` and then `.\transcribe` in PowerShell. Mac and Linux: run `cd ~/Transcribe` and then `./transcribe.sh` in Terminal.
+
+## Using Transcribe
+
+Transcribe starts with a simple menu. Type a number and press Enter, then drag your file into the window when it asks. The results go to the **`output`** folder.
+
+<p align="center">
+  <img src="assets/menu.svg" alt="The Transcribe menu: 1 transcribe audio or video, 2 subtitles from my script, 3 open the web app in your browser, 4 check my setup, 5 download the models now, 0 exit" width="100%">
+</p>
 
 ### Or use commands
 
-On Windows, type these in a terminal opened in the Transcribe folder (in File Explorer: right-click inside the folder, then **Open in Terminal**). On Mac and Linux, write `./transcribe.sh` instead of `.\transcribe`.
+In PowerShell in `C:\Transcribe` (Mac and Linux: in Terminal in `~/Transcribe`, writing `./transcribe.sh` instead of `.\transcribe`):
 
 | What | Command |
 |---|---|
@@ -80,7 +143,7 @@ On Windows, type these in a terminal opened in the Transcribe folder (in File Ex
 | The browser app | `.\transcribe app` |
 | Check the setup | `.\transcribe check` |
 
-`.\transcribe help` lists every option.
+`.\transcribe help` lists every option. File names with spaces need quote marks: `.\transcribe "my holiday video.mp4"`.
 
 ## What you get
 
@@ -97,15 +160,7 @@ For `my-video.mp4`, the `output` folder gets:
 - **Files:** almost any audio or video: mp3, wav, m4a, aac, flac, ogg, mp4, mov, mkv, webm...
 - **Long recordings** are processed in parts of about 3 minutes; an hour-long recording is fine.
 
-## What your computer needs
-
-| Computer | How it runs |
-|---|---|
-| Windows or Linux PC with an **NVIDIA graphics card** (6 GB or more; 8 GB or more for best quality) | Fast. |
-| **Mac with Apple Silicon** (M1 or newer) | Works well; uses the best model with 16 GB of memory or more. |
-| Any other Windows or Linux PC | Works on the processor, but long recordings take a while. |
-
-Intel Macs and Windows on ARM aren't supported. Transcribe picks the best settings for your computer automatically; `--quality fast` (the smaller 0.6B model) or `--quality best` (the 1.7B model) overrides them.
+Transcribe picks the best settings for your computer automatically. `--quality fast` (the smaller 0.6B model) or `--quality best` (the 1.7B model) overrides them.
 
 ## What is inside
 
@@ -116,6 +171,7 @@ Intel Macs and Windows on ARM aren't supported. Transcribe picks the best settin
 | `Transcribe AI Guide.md` | Everything an AI assistant needs to help you, step by step, including troubleshooting. |
 | `AGENTS.md`, `SKILL.md` | Instructions for AI agents. `CLAUDE.md` and `GEMINI.md` point to them. |
 | `app/` | The Transcribe program. |
+| `assets/` | The pictures on this page. |
 | `output/` | Your transcripts and subtitles. |
 | `envs/`, `models/`, `.tools/` | Created by the installer: Python, the AI libraries and the downloaded models. |
 

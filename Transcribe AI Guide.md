@@ -61,46 +61,104 @@ The terminal must be **in the Transcribe folder** (section 4 explains how). File
 
 | Question | How to check | What it means |
 |---|---|---|
+| Enough disk space? | Windows: File Explorer > **This PC** shows the free space on `C:`. Mac: Apple menu > **System Settings** > **General** > **Storage**. | About **15 GB free** (about 7 GB for the programs, 4 to 7 GB for the models). |
 | Which system? | | Windows 10 or 11 (64-bit), a Mac with Apple Silicon, or Linux. |
 | Mac: Apple Silicon or Intel? | Apple menu > **About This Mac**. "Chip: Apple M1" (M2, M3, M4...) is Apple Silicon. "Processor: Intel" is Intel. | **Intel Macs can't run Transcribe** (current PyTorch doesn't support them). |
 | Windows: NVIDIA graphics card? | Press Ctrl+Shift+Esc (Task Manager) > **Performance**. A "GPU" entry named "NVIDIA ..." means yes; it also shows the "Dedicated GPU memory". | With NVIDIA: fast. Without: Transcribe still works, on the processor, but long recordings take a while. |
 | Windows on ARM? | Settings > System > About: "ARM-based processor". | Not supported. |
-| Enough disk space? | | About **15 GB free** (about 7 GB for the programs, 4 to 7 GB for the models). |
 
 ### Windows
 
-1. **Download:** on `https://github.com/Clipizo/Transcribe`, click the green **Code** button, then **Download ZIP**.
-2. **Extract:** in the Downloads folder, right-click `Transcribe-main.zip` > **Extract All...**, type `C:\` as the destination and click **Extract**. Then rename `C:\Transcribe-main` to `C:\Transcribe`.
-   - Don't run anything from inside the ZIP without extracting it.
-   - Avoid long paths, OneDrive folders and the Desktop: the AI models are large and long paths can break the install. `C:\Transcribe` is ideal.
-3. **Install:** open `C:\Transcribe` and double-click **`install-windows.bat`**.
-   - If Windows shows *"Windows protected your PC"*, click **More info**, then **Run anyway**. If it asks *"Do you want to run this file?"*, click **Run**.
-   - A black window opens and shows the progress in 4 steps. The PyTorch download (about 3 GB with an NVIDIA card) can take 5 to 20 minutes and may look stuck; it isn't.
-   - **Don't click inside the black window:** that pauses it (the title then starts with "Select"). If that happens, press Esc.
+Each command goes into **PowerShell** (press the Windows key, type `PowerShell`, press Enter). Give the user one command at a time; they paste it, press Enter, and wait until it finishes.
+
+1. Download Transcribe:
+   ```powershell
+   Invoke-WebRequest "https://github.com/Clipizo/Transcribe/archive/refs/heads/main.zip" -OutFile "$env:TEMP\Transcribe.zip"
+   ```
+2. Unpack it to `C:\Transcribe` (two commands):
+   ```powershell
+   Expand-Archive "$env:TEMP\Transcribe.zip" -DestinationPath "C:\"
+   ```
+   ```powershell
+   Rename-Item "C:\Transcribe-main" "Transcribe"
+   ```
+3. Go into the folder:
+   ```powershell
+   cd C:\Transcribe
+   ```
+4. Install:
+   ```powershell
+   .\install-windows.bat
+   ```
+   - It shows the progress in 4 steps. The PyTorch download (about 3 GB with an NVIDIA card) can take 5 to 20 minutes and may look stuck; it isn't.
+   - **Don't click inside the window:** that pauses it (the title then starts with "Select"). If that happens, press Esc.
    - At the end it offers to download the models now: press Enter for yes.
-4. **Done** when it says **Transcribe is installed!** Press a key to close the window.
+   - **Done** when it says **Transcribe is installed!**, followed by "Press any key to continue": press a key.
+5. Start Transcribe:
+   ```powershell
+   .\transcribe
+   ```
+
+**Without commands:** on the GitHub page, click **Code** > **Download ZIP**. Right-click the ZIP > **Extract All...**, extract it to `C:\`, rename `C:\Transcribe-main` to `C:\Transcribe`, then double-click `install-windows.bat` and later `transcribe.bat`. If Windows shows *"Windows protected your PC"*, click **More info** > **Run anyway**; if it asks *"Do you want to run this file?"*, click **Run**. Don't run anything from inside the ZIP without extracting it.
+
+**Where the folder goes:** `C:\Transcribe` is ideal. Avoid long paths, OneDrive folders and the Desktop: the AI models are large and long paths can break the install.
+
+**If a command fails:**
+- `Expand-Archive` or `Rename-Item` says the folder already exists: Transcribe was downloaded before. Use the existing `C:\Transcribe` (run the installer again in it), or, if the user wants a fresh copy, rename the old folder first.
+- `Invoke-WebRequest` fails with an SSL/TLS error (older Windows 10): use the "Without commands" way above.
 
 ### Mac (Apple Silicon)
 
-1. **Download:** on the GitHub page, click **Code** > **Download ZIP**. Safari unzips it into Downloads as `Transcribe-main`. Move that folder to the home folder (the one with your name) and rename it `Transcribe`.
-2. **Open Terminal:** press Cmd+Space, type `Terminal`, press Enter.
-3. **Go to the folder:** type `cd ` (with a space after it), drag the Transcribe folder from Finder into the Terminal window, and press Enter.
-4. **Install:** type this and press Enter:
+Each command goes into **Terminal** (press Cmd+Space, type `Terminal`, press Enter), one at a time:
+
+1. Go to the home folder:
+   ```bash
+   cd ~
+   ```
+2. Download Transcribe:
+   ```bash
+   curl -L -o Transcribe.zip https://github.com/Clipizo/Transcribe/archive/refs/heads/main.zip
+   ```
+3. Unpack it to `~/Transcribe`:
+   ```bash
+   unzip -q Transcribe.zip && mv Transcribe-main Transcribe && rm Transcribe.zip
+   ```
+4. Go into the folder:
+   ```bash
+   cd ~/Transcribe
+   ```
+5. Install. It shows the progress in 4 steps and takes about 5 to 15 minutes. At the end, press Enter to download the models. Done when it says **Transcribe is installed!**
    ```bash
    bash install.sh
    ```
-   It shows the progress in 4 steps and takes about 5 to 15 minutes. At the end, press Enter to download the models.
-5. **Done** when it says **Transcribe is installed!**
+6. Start Transcribe:
+   ```bash
+   ./transcribe.sh
+   ```
+
+If `mv` says `Transcribe` already exists, Transcribe was downloaded before: use the existing `~/Transcribe` folder.
 
 ### Linux
 
 ```bash
-git clone https://github.com/Clipizo/Transcribe.git
-cd Transcribe
+git clone https://github.com/Clipizo/Transcribe.git ~/Transcribe
+```
+```bash
+cd ~/Transcribe
+```
+```bash
 bash install.sh
 ```
+```bash
+./transcribe.sh
+```
 
-For NVIDIA graphics, the NVIDIA driver must be installed (`nvidia-smi` should work). Without `git`, download the ZIP from the GitHub page instead.
+For NVIDIA graphics, the NVIDIA driver must be installed (`nvidia-smi` should work). Without `git`, use the Mac commands (`curl` and `unzip`).
+
+### Starting it next time
+
+- **Windows:** double-click `transcribe.bat` in `C:\Transcribe`, or in PowerShell run `cd C:\Transcribe` and then `.\transcribe`.
+- **Mac and Linux:** in Terminal, run `cd ~/Transcribe` and then `./transcribe.sh`.
 
 ### Installer options
 
@@ -139,9 +197,8 @@ The user types a number and presses Enter:
 
 **Open a terminal in the Transcribe folder:**
 
-- **Windows:** open the folder in File Explorer, right-click an empty spot > **Open in Terminal**. (Or click the address bar, type `cmd`, press Enter: that opens Command Prompt there, where you write `transcribe` without `.\`.)
-- **Mac:** in Terminal, type `cd `, drag the Transcribe folder into the window, press Enter.
-- **Linux:** `cd` into the folder.
+- **Windows:** in PowerShell, run `cd C:\Transcribe`. Or open the folder in File Explorer and right-click an empty spot > **Open in Terminal**. (Clicking the address bar, typing `cmd` and pressing Enter opens Command Prompt there instead, where you write `transcribe` without `.\`.)
+- **Mac and Linux:** in Terminal, run `cd ~/Transcribe`. If the folder is somewhere else, type `cd ` (with a space), drag the folder into the window, and press Enter.
 
 **All commands:**
 

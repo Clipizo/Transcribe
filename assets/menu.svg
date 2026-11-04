@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 466" width="1000" height="466" role="img" aria-labelledby="title desc">
+<title id="title">The Transcribe menu</title>
+<desc id="desc">Transcribe - transcripts and subtitles on your own computer. 1: Transcribe audio or video (text + subtitles). 2: Subtitles from my script (exact words, for example a voiceover). 3: Open the web app in your browser. 4: Check my setup. 5: Download the models now (so nothing downloads later). 0: Exit.</desc>
+<rect width="1000" height="466" rx="16" fill="#0F172A" stroke="#334155" stroke-width="2"/>
+<path d="M0 16 A16 16 0 0 1 16 0 H984 A16 16 0 0 1 1000 16 V48 H0 Z" fill="#1E293B"/>
+<circle cx="28" cy="24" r="7" fill="#EF4444"/><circle cx="52" cy="24" r="7" fill="#F59E0B"/><circle cx="76" cy="24" r="7" fill="#22C55E"/>
+<text x="500" y="30" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" fill="#94A3B8">Transcribe</text>
+<g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="20">
+<text x="36" y="92" fill="#475569">============================================================</text>
+<text x="60" y="122" fill="#F8FAFC" font-weight="700">Transcribe - transcripts and subtitles on your own computer</text>
+<text x="36" y="152" fill="#475569">============================================================</text>
+<text x="60" y="212" fill="#5EEAD4" font-weight="700">1</text>
+<text x="96" y="212" fill="#E2E8F0">Transcribe audio or video (text + subtitles)</text>
+<text x="60" y="242" fill="#5EEAD4" font-weight="700">2</text>
+<text x="96" y="242" fill="#E2E8F0">Subtitles from my script (exact words, for example a voiceover)</text>
+<text x="60" y="272" fill="#5EEAD4" font-weight="700">3</text>
+<text x="96" y="272" fill="#E2E8F0">Open the web app in your browser</text>
+<text x="60" y="302" fill="#5EEAD4" font-weight="700">4</text>
+<text x="96" y="302" fill="#E2E8F0">Check my setup</text>
+<text x="60" y="332" fill="#5EEAD4" font-weight="700">5</text>
+<text x="96" y="332" fill="#E2E8F0">Download the models now (so nothing downloads later)</text>
+<text x="60" y="362" fill="#5EEAD4" font-weight="700">0</text>
+<text x="96" y="362" fill="#E2E8F0">Exit</text>
+<text x="36" y="422" fill="#E2E8F0">Type a number and press Enter: <tspan fill="#5EEAD4" font-weight="700">1</tspan></text>
+<rect x="424" y="404" width="12" height="24" fill="#5EEAD4" opacity="0.8"/>
+</g></svg>

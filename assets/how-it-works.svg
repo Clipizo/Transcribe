@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 316" width="1200" height="316" role="img" aria-labelledby="title desc">
+  <title id="title">How Transcribe works</title>
+  <desc id="desc">1. Your audio or video file. 2. Transcribe listens on your own computer, in 30 languages. 3. You get the text, subtitles and word timings.</desc>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <g transform="translate(10 24)">
+  <rect width="340" height="268" rx="22" fill="#0F766E"/>
+  <g transform="translate(30 28)" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="48" height="36" rx="5" /><path d="M23 20 L36 28 L23 36 Z" /></g>
+  <text x="30" y="136" font-size="27" font-weight="700" fill="#FFFFFF">1. Audio or video</text>
+  <text x="30" y="176" font-size="21" fill="#FFFFFF" fill-opacity="0.92">mp3, wav, m4a, mp4,</text>
+  <text x="30" y="206" font-size="21" fill="#FFFFFF" fill-opacity="0.92">mov and more</text>
+  </g>
+  <g transform="translate(430 24)">
+  <rect width="340" height="268" rx="22" fill="#0E7490"/>
+  <g transform="translate(30 28)" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="48" height="32" rx="4" /><path d="M20 50 H36 M28 38 V50" /><path d="M16 22 L22 16 M16 22 L22 28 M40 22 L34 16 M40 22 L34 28" /></g>
+  <text x="30" y="136" font-size="27" font-weight="700" fill="#FFFFFF">2. Transcribe</text>
+  <text x="30" y="176" font-size="21" fill="#FFFFFF" fill-opacity="0.92">listens on your own</text>
+  <text x="30" y="206" font-size="21" fill="#FFFFFF" fill-opacity="0.92">computer, in 30</text>
+  <text x="30" y="236" font-size="21" fill="#FFFFFF" fill-opacity="0.92">languages</text>
+  </g>
+  <g transform="translate(850 24)">
+  <rect width="340" height="268" rx="22" fill="#1D4ED8"/>
+  <g transform="translate(30 28)" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="48" height="40" rx="5" /><path d="M12 32 H28 M32 32 H44 M12 40 H22 M26 40 H44" /></g>
+  <text x="30" y="136" font-size="27" font-weight="700" fill="#FFFFFF">3. Text + subtitles</text>
+  <text x="30" y="176" font-size="21" font-weight="700" fill="#FFFFFF">.txt</text><text x="172" y="176" font-size="21" fill="#FFFFFF" fill-opacity="0.92">the text</text>
+  <text x="30" y="206" font-size="21" font-weight="700" fill="#FFFFFF">.srt</text><text x="172" y="206" font-size="21" fill="#FFFFFF" fill-opacity="0.92">subtitles</text>
+  <text x="30" y="236" font-size="21" font-weight="700" fill="#FFFFFF">.words.json</text><text x="172" y="236" font-size="21" fill="#FFFFFF" fill-opacity="0.92">word timings</text>
+  </g>
+  <g stroke="#8B949E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M362 158 H406"/><path d="M392 144 L408 158 L392 172"/></g>
+  <g stroke="#8B949E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M782 158 H826"/><path d="M812 144 L828 158 L812 172"/></g>
+  </g></svg>

@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" width="1200" height="320" role="img" aria-labelledby="title desc">
+  <title id="title">Transcribe</title>
+  <desc id="desc">Free transcripts and subtitles on your own computer</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#134E4A"/>
+      <stop offset="0.55" stop-color="#0E7490"/>
+      <stop offset="1" stop-color="#1D4ED8"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="320" rx="28" fill="url(#bg)"/>
+  <circle cx="1110" cy="30" r="190" fill="#FFFFFF" fill-opacity="0.06"/>
+  <circle cx="760" cy="330" r="140" fill="#FFFFFF" fill-opacity="0.05"/>
+
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" fill="#FFFFFF">
+    <text x="64" y="128" font-size="76" font-weight="800" letter-spacing="-1">Transcribe</text>
+    <text x="66" y="178" font-size="27" fill-opacity="0.92">Free transcripts and subtitles,</text>
+    <text x="66" y="212" font-size="27" fill-opacity="0.92">on your own computer</text>
+    <g font-size="18" font-weight="600" text-anchor="middle">
+      <rect x="64" y="244" width="150" height="38" rx="19" fill="#FFFFFF" fill-opacity="0.16"/>
+      <text x="139" y="269">30 languages</text>
+      <rect x="228" y="244" width="180" height="38" rx="19" fill="#FFFFFF" fill-opacity="0.16"/>
+      <text x="318" y="269">Subtitles (.srt)</text>
+      <rect x="422" y="244" width="236" height="38" rx="19" fill="#FFFFFF" fill-opacity="0.16"/>
+      <text x="540" y="269">Windows · Mac · Linux</text>
+    </g>
+  </g>
+
+  <!-- waveform -->
+  <g fill="#FFFFFF">
+    <rect x="726" y="146" width="10" height="28" rx="5"/>
+    <rect x="744" y="122" width="10" height="76" rx="5"/>
+    <rect x="762" y="96" width="10" height="128" rx="5"/>
+    <rect x="780" y="132" width="10" height="56" rx="5"/>
+    <rect x="798" y="108" width="10" height="104" rx="5"/>
+    <rect x="816" y="82" width="10" height="156" rx="5"/>
+    <rect x="834" y="126" width="10" height="68" rx="5"/>
+    <rect x="852" y="150" width="10" height="20" rx="5"/>
+  </g>
+  <!-- arrow -->
+  <g stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.9">
+    <path d="M882 160 H926"/>
+    <path d="M912 146 L928 160 L912 174"/>
+  </g>
+  <!-- subtitle card -->
+  <g transform="translate(946 64)" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
+    <rect width="206" height="192" rx="18" fill="#FFFFFF"/>
+    <text x="20" y="40" font-size="15" fill="#0E7490">00:00:01,200</text>
+    <rect x="20" y="54" width="160" height="11" rx="5.5" fill="#0F172A"/>
+    <rect x="20" y="74" width="112" height="11" rx="5.5" fill="#0F172A"/>
+    <text x="20" y="122" font-size="15" fill="#0E7490">00:00:04,050</text>
+    <rect x="20" y="136" width="148" height="11" rx="5.5" fill="#0F172A"/>
+    <rect x="20" y="156" width="130" height="11" rx="5.5" fill="#0F172A"/>
+  </g>
+</svg>
