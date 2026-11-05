@@ -147,6 +147,8 @@ The same commands as on a Mac, in a terminal (Ubuntu: Ctrl+Alt+T). They use `tar
 
 For NVIDIA graphics, the NVIDIA driver must be installed (`nvidia-smi` should work).
 
+**WSL (Linux inside Windows)** works like Linux (tested on Ubuntu 24.04 with an NVIDIA card). Keep the folder in the Linux home folder (`~/Transcribe`), not under `/mnt/c`, which is much slower. The graphics card works through the normal Windows NVIDIA driver: don't install an NVIDIA driver inside WSL. For most Windows users the Windows steps above are simpler.
+
 ### Starting it next time
 
 - **Windows:** double-click `transcribe.bat` in `C:\Transcribe`, or in PowerShell run `cd C:\Transcribe` and then `./transcribe`.
@@ -269,6 +271,9 @@ This is the official Qwen demo app, with timestamps. The browser opens by itself
 | The installer window closes immediately, or Windows opens the file in Notepad | Make sure the ZIP was extracted (section 2) and double-click `install-windows.bat` itself. |
 | "It looks like you started the installer from inside the ZIP file" | Extract the ZIP first, move the folder to `C:\Transcribe`, and run the installer from there. |
 | "Could not download uv" | No internet, or the network blocks `astral.sh` or `github.com` (some school and office networks). Try another network. |
+| Mac or Linux: `unzip: command not found` | Use the steps in section 2: they download a `.tar.gz` and unpack it with `tar -xzf Transcribe.tar.gz`, which every Mac and Linux has. |
+| Linux: `curl: command not found` | Download with `wget -O Transcribe.tar.gz https://github.com/Clipizo/Transcribe/archive/refs/heads/main.tar.gz` instead. |
+| "Please run the installer without sudo" | Run `bash install.sh` without `sudo`. If an earlier run with `sudo` left files the user can't change ("Permission denied" inside the Transcribe folder), give the folder back once with `sudo chown -R "$USER" ~/Transcribe`, then run the installer again. |
 | Windows: the installer says a Microsoft component is missing, or an error mentions `c10.dll`, `WinError 126` or "DLL load failed" | The installer offers to install it (Microsoft's free Visual C++ Redistributable): press Enter, then click **Yes** when Windows asks for permission. If that fails, download it from `https://aka.ms/vs/17/release/vc_redist.x64.exe`, run it, restart the computer, and run the installer again. |
 | "Installing PyTorch failed, 3 times" or another download error during the install | An internet problem. Check the connection and run the installer again: it keeps what it downloaded. On school, work or some country networks, `download.pytorch.org` or `pypi.org` may be blocked: try another network. |
 | The install looks stuck | The PyTorch download is large; wait. On Windows, if the window title starts with "Select", press Esc (clicking the window pauses it). |
@@ -280,7 +285,9 @@ This is the official Qwen demo app, with timestamps. The browser opens by itself
 | `./transcribe check` says "processor only" on a PC with an NVIDIA card | Update the NVIDIA driver (from nvidia.com or the NVIDIA App), restart the computer, then run the installer again. |
 | "no kernel image is available" or "CUDA capability" errors | Older NVIDIA card: run the installer with `--torch cu126`. |
 | "out of memory" | Close other programs (games, video editors, many browser tabs) and add `--quality fast`. |
+| Very slow, or seems stuck after "Model ready" or "Timing the words" (often an 8 GB Mac or PC) | The computer has run out of free memory and is swapping. Close browsers, Discord, video editors and games (or restart the computer) and try again; add `--quality fast` if it's still slow. On a Mac, Activity Monitor > Memory shows "Memory Pressure": red means full. The first use after installing is also a minute or two slower than later ones. |
 | The model download fails or is very slow | Check the internet and run the command again: downloads continue where they stopped. If `huggingface.co` is blocked, see section 9. |
+| The installer ends with "The model download didn't finish. That's OK..." | Nothing is broken: the models finish downloading the first time Transcribe is used. To finish now: `./transcribe download`. |
 | "I can't find this file" | Drag the file into the window instead of typing its name, or put quote marks around a name with spaces. |
 | "I couldn't find any sound in this file" | The file has no audio track. Export the audio from your editor, or use the original recording. |
 | Names or terms are wrong | Add `--hint "Name1, Name2"`. |

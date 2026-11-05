@@ -22,27 +22,30 @@ You run **Transcribe** for the user on their own computer. It wraps the official
 
 ## Workflow
 
-1. **Check the install.** If `envs/settings.json` exists, run `transcribe check` and fix anything it reports. Otherwise install:
+1. **Get Transcribe, if the folder isn't on the computer yet.** Use the commands in the guide's section 2: on Windows, `Invoke-WebRequest` and `Expand-Archive` into `C:\Transcribe`; on Mac and Linux, `curl` and `tar` into `~/Transcribe`. Don't depend on `git` or `unzip`: many computers don't have them.
+2. **Check the install.** If `envs/settings.json` exists, run `transcribe check` and fix anything it reports. Otherwise install:
    - Windows: `./install-windows.bat --yes` in PowerShell (Command Prompt: `install-windows.bat --yes`)
-   - Mac and Linux: `bash install.sh --yes`
+   - Mac and Linux: `bash install.sh --yes`, never with `sudo` (the installer refuses it).
 
    The install takes 5 to 30 minutes and downloads 3 to 4 GB with an NVIDIA card (Mac: well under 1 GB). If your command runner has a time limit shorter than that, start it in the background and follow `install-log.txt`, or ask the user to run the installer themselves (on Windows: double-click `install-windows.bat`). Then run `transcribe check`.
 
+   On Windows without Microsoft's Visual C++ component (PyTorch needs it), the installer installs it and **Windows shows a permission prompt**: tell the user to click **Yes**, because the install waits for that answer. With `--yes` the models aren't downloaded during the install; they download the first time Transcribe runs (4 to 7 GB), or add `--download`.
+
    If the install fails, use the guide's troubleshooting table. `--repair` rebuilds the environment; `--torch cu126` helps older NVIDIA cards. **Never install packages yourself** (pip, conda, brew, PyTorch, CUDA, ffmpeg) and never edit `envs/`.
-2. **Understand the request.** Ask, in one message and only for what is missing:
+3. **Understand the request.** Ask, in one message and only for what is missing:
    - which file or files;
    - whether they want subtitles or just the text;
    - names or terms to expect (for `--hint`);
    - whether they have the exact script (for `--script`).
 
    Defaults: automatic language, text and subtitles, results in `output/`.
-3. **Run the command:**
+4. **Run the command:**
    - `transcribe FILE [--hint "names, terms"] [--language LANGUAGE] [--no-subtitles] [--max-chars N]`
    - With a script: `transcribe FILE --script SCRIPT.txt`
    - Ahead-of-time downloads: `transcribe download`
 
    Quote file paths that contain spaces. The models download the first time (about 4 to 7 GB). Long recordings take time, a lot without an NVIDIA card: let the command finish (allow 30 minutes or more for long files, or run it in the background). It prints its progress.
-4. **Tell the user:**
+5. **Tell the user:**
    - where the files are (the paths printed at the end, in `output/`): `.txt`, `.srt` and `.words.json`;
    - the detected language, and any notes the command printed (for example that subtitle timings aren't available for that language);
    - how to import the `.srt` into their editor or YouTube (guide section 6).
