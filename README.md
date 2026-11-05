@@ -18,7 +18,7 @@ Transcribe is a beginner-friendly kit for **Qwen3-ASR**, the free, open speech-r
 - **Free disk space: about 15 GB.** The programs take about 8 GB (less without an NVIDIA graphics card). The AI models take about 4 to 7 GB and download by themselves the first time you use Transcribe (see [The AI models](#the-ai-models)).
 - **A computer:** a Windows 10 or 11 PC, a Mac with Apple Silicon (M1 or newer), or a Linux PC. Intel Macs and Windows on ARM aren't supported.
 - **A graphics card (optional):** with an NVIDIA graphics card (6 GB or more; 8 GB or more for best quality) or on a Mac it's quick. Without either, it runs on the processor: it works, but long recordings take a while.
-- **An internet connection** for the install (about 3 GB with an NVIDIA card, less without) and the first download of the models.
+- **An internet connection** for the install (3 to 4 GB with an NVIDIA card, less without) and the first download of the models.
 
 ## Installation
 
@@ -98,12 +98,12 @@ cd ~
 
 **Step 3. Download Transcribe**
 ```bash
-curl -L -o Transcribe.zip https://github.com/Clipizo/Transcribe/archive/refs/heads/main.zip
+curl -L -o Transcribe.tar.gz https://github.com/Clipizo/Transcribe/archive/refs/heads/main.tar.gz
 ```
 
-**Step 4. Unzip it**
+**Step 4. Unpack it**
 ```bash
-unzip -oq Transcribe.zip
+tar -xzf Transcribe.tar.gz
 ```
 
 **Step 5. Rename the folder to `Transcribe`**
@@ -130,11 +130,11 @@ Installed Transcribe before? Then before step 5, keep the old folder under anoth
 
 #### Linux
 
-The same steps as on a Mac, in a terminal. If step 3 says `curl: command not found`, use this instead:
+The same steps as on a Mac, in a terminal (on Ubuntu, press Ctrl+Alt+T to open one). If step 3 says `curl: command not found`, use this instead:
 ```bash
-wget -O Transcribe.zip https://github.com/Clipizo/Transcribe/archive/refs/heads/main.zip
+wget -O Transcribe.tar.gz https://github.com/Clipizo/Transcribe/archive/refs/heads/main.tar.gz
 ```
-For an NVIDIA graphics card, the NVIDIA driver must be installed (the command `nvidia-smi` should work).
+You don't need administrator rights (`sudo`) for any step. For an NVIDIA graphics card, the NVIDIA driver must be installed (the command `nvidia-smi` should work).
 
 **To start it again later:**
 

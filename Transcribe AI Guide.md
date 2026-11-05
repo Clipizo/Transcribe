@@ -116,11 +116,11 @@ Each command goes into **Terminal** (press Cmd+Space, type `Terminal`, press Ent
    ```
 2. Download Transcribe:
    ```bash
-   curl -L -o Transcribe.zip https://github.com/Clipizo/Transcribe/archive/refs/heads/main.zip
+   curl -L -o Transcribe.tar.gz https://github.com/Clipizo/Transcribe/archive/refs/heads/main.tar.gz
    ```
-3. Unzip it:
+3. Unpack it:
    ```bash
-   unzip -oq Transcribe.zip
+   tar -xzf Transcribe.tar.gz
    ```
 4. Rename the folder to `Transcribe`:
    ```bash
@@ -143,7 +143,7 @@ If `~/Transcribe` already exists (Transcribe was downloaded before), `mv` would 
 
 ### Linux
 
-The same commands as on a Mac, in a terminal. If `curl` isn't installed, download with `wget -O Transcribe.zip https://github.com/Clipizo/Transcribe/archive/refs/heads/main.zip` instead. With `git`, `git clone https://github.com/Clipizo/Transcribe.git ~/Transcribe` replaces the download, unzip and rename steps.
+The same commands as on a Mac, in a terminal (Ubuntu: Ctrl+Alt+T). They use `tar`, which every Linux has (`unzip` often isn't installed). If `curl` isn't installed, download with `wget -O Transcribe.tar.gz https://github.com/Clipizo/Transcribe/archive/refs/heads/main.tar.gz` instead. With `git`, `git clone https://github.com/Clipizo/Transcribe.git ~/Transcribe` replaces the download, unpack and rename steps. No step needs `sudo`; don't run the installer with `sudo`.
 
 For NVIDIA graphics, the NVIDIA driver must be installed (`nvidia-smi` should work).
 

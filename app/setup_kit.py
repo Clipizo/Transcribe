@@ -210,7 +210,8 @@ def apple_silicon() -> bool:
 
 def detect() -> dict:
     info = {
-        # On a Mac, say "macOS 15.2" (what people know), not "Darwin 24.2.0".
+        # Name the system the way people know it: "macOS 15.2", not "Darwin 24.2.0", and
+        # "Ubuntu 24.04.5 LTS", not "Linux 6.6.87".
         "os": "macOS" if C.IS_MAC else platform.system(),
         "os_version": (platform.mac_ver()[0] or platform.release()) if C.IS_MAC else platform.release(),
         "machine": platform.machine().lower(),
@@ -218,6 +219,13 @@ def detect() -> dict:
         "apple_silicon": apple_silicon(),
         "nvidia": None if C.IS_MAC else nvidia_gpu(),
     }
+    if info["os"] == "Linux":
+        try:
+            name = platform.freedesktop_os_release().get("PRETTY_NAME")
+            if name:
+                info["os"], info["os_version"] = name, ""
+        except OSError:
+            pass
     try:
         info["disk_free_gb"] = shutil.disk_usage(C.KIT).free / 1024**3
     except OSError:
@@ -426,7 +434,7 @@ def install_env(uv: str, index: str, repair: bool) -> None:
     if url:
         cmd += ["--index-url", url]
     if not torch_matches(installed_torch(), index):
-        log("  Downloading PyTorch. It is big (Mac: about 100 MB, NVIDIA: about 3 GB), so this can take a while.")
+        log("  Downloading PyTorch. It is big (Mac: about 100 MB, NVIDIA: 3 to 4 GB), so this can take a while.")
     run(cmd, "Installing PyTorch")
     run([uv, "pip", "install", "--python", str(py), "--no-deps", "-r", str(C.APP / "requirements" / REQUIREMENTS)],
         f"Installing {MODEL_LABEL} and the other packages")
@@ -470,7 +478,8 @@ def make_shortcut() -> None:
 
 
 def describe(info: dict) -> None:
-    log(f"  System:     {info['os']} {info['os_version']} ({info['machine']})")
+    system = " ".join(p for p in (info["os"], info["os_version"]) if p)
+    log(f"  System:     {system} ({info['machine']})")
     if info.get("ram_gb"):
         log(f"  Memory:     {info['ram_gb']:.0f} GB")
     gpu = info.get("nvidia")

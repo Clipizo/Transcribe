@@ -10,6 +10,12 @@
 set -u
 KIT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$KIT" || exit 1
+if [ "$(id -u)" = "0" ] && [ -n "${SUDO_USER:-}" ]; then
+  # With sudo, the files would belong to the administrator and Transcribe couldn't use them later.
+  echo "Please run the installer without sudo:  bash install.sh"
+  echo "Transcribe installs everything inside this folder, so it doesn't need administrator rights."
+  exit 1
+fi
 # Ignore Python settings that other programs may have left on this computer.
 unset PYTHONHOME PYTHONPATH
 UV_VERSION="0.13.7"   # the uv version this kit was tested with

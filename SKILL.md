@@ -26,7 +26,7 @@ You run **Transcribe** for the user on their own computer. It wraps the official
    - Windows: `./install-windows.bat --yes` in PowerShell (Command Prompt: `install-windows.bat --yes`)
    - Mac and Linux: `bash install.sh --yes`
 
-   The install takes 5 to 30 minutes and downloads about 3 GB with an NVIDIA card (Mac: well under 1 GB). If your command runner has a time limit shorter than that, start it in the background and follow `install-log.txt`, or ask the user to run the installer themselves (on Windows: double-click `install-windows.bat`). Then run `transcribe check`.
+   The install takes 5 to 30 minutes and downloads 3 to 4 GB with an NVIDIA card (Mac: well under 1 GB). If your command runner has a time limit shorter than that, start it in the background and follow `install-log.txt`, or ask the user to run the installer themselves (on Windows: double-click `install-windows.bat`). Then run `transcribe check`.
 
    If the install fails, use the guide's troubleshooting table. `--repair` rebuilds the environment; `--torch cu126` helps older NVIDIA cards. **Never install packages yourself** (pip, conda, brew, PyTorch, CUDA, ffmpeg) and never edit `envs/`.
 2. **Understand the request.** Ask, in one message and only for what is missing:
