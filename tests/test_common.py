@@ -95,6 +95,53 @@ class SubtitleTests(unittest.TestCase):
         self.assertGreater(len(cues), 3)
         self.assertTrue(all(len(c["text"]) <= 23 for c in cues))
 
+    def test_one_word_per_subtitle(self):
+        text = "Hello world, this is a test."
+        cues = C.build_cues(C.attach_display_text(text, timed(text)), max_words=1)
+        self.assertEqual([c["text"] for c in cues], ["Hello", "world,", "this", "is", "a", "test."])
+        for a, b in zip(cues, cues[1:]):
+            self.assertLessEqual(a["end"], b["start"])
+
+    def test_words_per_line_are_balanced(self):
+        text = "one two three four five six seven."
+        cues = C.build_cues(C.attach_display_text(text, timed(text)), max_words=3)
+        self.assertEqual(len(cues), 3)  # 7 words, at most 3 per line: 3 similar lines, no lonely word
+        self.assertTrue(all(2 <= len(c["text"].split()) <= 3 for c in cues))
+        self.assertEqual(" ".join(c["text"] for c in cues), text)
+
+    def test_two_lines_per_subtitle(self):
+        text = "This sentence is long enough to need two lines when each line is short."
+        cues = C.build_cues(C.attach_display_text(text, timed(text)), max_chars=30, lines=2)
+        self.assertEqual(len(cues), 2)
+        self.assertEqual(cues[0]["text"].count("\n"), 1)
+        for cue in cues:
+            self.assertTrue(all(len(line) <= 35 for line in cue["text"].split("\n")))
+        self.assertEqual(" ".join(c["text"].replace("\n", " ") for c in cues), text)
+
+    def test_two_lines_without_a_lonely_last_subtitle(self):
+        text = "Welcome to this short test of Transcribe."
+        cues = C.build_cues(C.attach_display_text(text, timed(text)), max_words=3, lines=2)
+        self.assertEqual([c["text"] for c in cues], ["Welcome to\nthis short", "test of Transcribe."])
+
+    def test_two_lines_keep_short_subtitles_on_one_line(self):
+        text = "A short one. This one is much longer, so it needs a second line to fit."
+        cues = C.build_cues(C.attach_display_text(text, timed(text)), lines=2)
+        self.assertEqual([c["text"] for c in cues],
+                         ["A short one.", "This one is much longer,\nso it needs a second line to fit."])
+
+    def test_two_lines_never_mix_sentences(self):
+        text = "Short one. Another short one."
+        cues = C.build_cues(C.attach_display_text(text, timed(text)), lines=2)
+        self.assertEqual([c["text"] for c in cues], ["Short one.", "Another short one."])
+
+    def test_capitals_and_no_punctuation(self):
+        text = 'Hello, world! "Don\'t" stop, well-known friends... 你好。'
+        tokens = C.attach_display_text(text, timed(text))
+        cues = C.build_cues(tokens, caps=True, no_punctuation=True)
+        joined = " ".join(c["text"] for c in cues)
+        self.assertEqual(joined, "HELLO WORLD DON'T STOP WELL-KNOWN FRIENDS 你好")
+        self.assertEqual(tokens[0]["text"], "Hello,")  # the word timings keep the real text
+
     def test_srt_format(self):
         self.assertEqual(C.srt_time(3661.5), "01:01:01,500")
         srt = C.format_srt([{"start": 0, "end": 1.25, "text": "Hi."}, {"start": 1.5, "end": 2, "text": "Bye."}])
@@ -220,7 +267,7 @@ class CommandTests(unittest.TestCase):
             with mock.patch.object(T, "cmd_app") as app, mock.patch.object(T, "cmd_check") as check:
                 self.assertEqual(T.main(["app"]), 0)
                 self.assertEqual(T.main(["check"]), 0)
-            app.assert_called_once_with(None)
+            app.assert_called_once_with(None, open_browser=True)
             check.assert_called_once_with()
         finally:
             os.chdir(old)

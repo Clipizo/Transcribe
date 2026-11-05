@@ -40,7 +40,7 @@ You run **Transcribe** for the user on their own computer. It wraps the official
 
    Defaults: automatic language, text and subtitles, results in `output/`.
 4. **Run the command:**
-   - `transcribe FILE [--hint "names, terms"] [--language LANGUAGE] [--no-subtitles] [--max-chars N]`
+   - `transcribe FILE [--hint "names, terms"] [--language LANGUAGE] [--no-subtitles] [--max-chars N] [--max-words N] [--lines 1|2] [--caps] [--no-punctuation]`
    - With a script: `transcribe FILE --script SCRIPT.txt`
    - Ahead-of-time downloads: `transcribe download`
 
@@ -54,6 +54,7 @@ You run **Transcribe** for the user on their own computer. It wraps the official
 
 ## Rules
 
+- **Don't run `transcribe` without arguments** from your command runner: it starts the browser app and keeps running until it's stopped. Use the file commands. If the user wants the browser app, tell them to start it themselves (double-click `transcribe.bat`, or `./transcribe` in their terminal), or start `transcribe app` in the background and give them the address it prints.
 - **Only write to `output/`,** or to a place the user names. Never delete the user's files or overwrite them without asking.
 - **Leave the kit unchanged** (`app/`, the installers, the docs, this file) unless the user asks.
 - **Use the launcher** (`transcribe`), not the files in `app/` directly, and only the options in the guide.

@@ -14,7 +14,7 @@ For **Transcribe 1.0** (Clipizo). Give this file to any AI chat, such as ChatGPT
 
 ## Instructions for the AI
 
-You are helping someone who may never have used a terminal. Transcribe is a kit that installs the open Qwen3-ASR speech-recognition models into one folder and runs them through a menu and one simple command. Everything you need is in this guide. **Only use the commands, options and file names in this guide; don't invent others.**
+You are helping someone who may never have used a terminal. Transcribe is a kit that installs the open Qwen3-ASR speech-recognition models into one folder and runs them through a browser app and one simple command. Everything you need is in this guide. **Only use the commands, options and file names in this guide; don't invent others.**
 
 **How to help:**
 
@@ -41,7 +41,7 @@ The terminal must be **in the Transcribe folder** (section 4 explains how). File
 | Text of a recording | `./transcribe FILE --no-subtitles` | Qwen3-ASR (0.6B or 1.7B) |
 | Text and subtitles | `./transcribe FILE` | Qwen3-ASR, plus Qwen3-ForcedAligner-0.6B for the timings |
 | Subtitles with the exact words of a script | `./transcribe FILE --script SCRIPT.txt` | Qwen3-ForcedAligner-0.6B (plus Qwen3-ASR for recordings over 3 minutes) |
-| Browser app | `./transcribe app` | the official Qwen demo app |
+| Browser app: everything above, with a subtitle preview and controls | `./transcribe` | the same models |
 
 - Everything runs on the user's computer. Nothing is uploaded; there is no account and no cost.
 - The models download automatically from Hugging Face (huggingface.co) into the `models` folder the first time they're needed (about 4 to 7 GB in total, once). Section 9 lists every model with its download page.
@@ -96,6 +96,7 @@ Many of these commands print nothing when they work; the next line starting with
    ```powershell
    ./transcribe
    ```
+   It opens in the browser (section 3). Keep the window open while using it.
 
 **Without commands:** on the GitHub page, click **Code** > **Download ZIP**. Right-click the ZIP > **Extract All...**, extract it to `C:\`, rename `C:\Transcribe-main` to `C:\Transcribe`, then double-click `install-windows.bat` and later `transcribe.bat`. If Windows shows *"Windows protected your PC"*, click **More info** > **Run anyway**; if it asks *"Do you want to run this file?"*, click **Run**. Don't run anything from inside the ZIP without extracting it.
 
@@ -138,6 +139,7 @@ Each command goes into **Terminal** (press Cmd+Space, type `Terminal`, press Ent
    ```bash
    ./transcribe
    ```
+   It opens in the browser (section 3). Keep the window open while using it.
 
 If `~/Transcribe` already exists (Transcribe was downloaded before), `mv` would put the new folder inside it. Either use the existing `~/Transcribe` folder (run the installer again in it), or, for a fresh copy, first run `mv ~/Transcribe ~/Transcribe-old`, then step 4.
 
@@ -167,25 +169,21 @@ Add these after `install-windows.bat` (in a terminal) or `bash install.sh`:
 
 Running the installer again is always safe: it skips what is already done. Each run writes `install-log.txt` in the Transcribe folder.
 
-## 3. The menu (easiest)
+## 3. The browser app (easiest)
 
-**Windows:** double-click `transcribe.bat`. **Mac/Linux:** in Terminal, in the Transcribe folder, run `./transcribe`.
+**Windows:** double-click `transcribe.bat` (or run `./transcribe` in PowerShell in the Transcribe folder). **Mac/Linux:** in Terminal, in the Transcribe folder, run `./transcribe`. Transcribe opens in the browser at `http://127.0.0.1:7860` (the next free number if that one is busy). It runs only on this computer. The window that started it must stay open; closing it stops Transcribe.
 
-```
-  1  Transcribe audio or video (text + subtitles)
-  2  Subtitles from my script (exact words, for example a voiceover)
-  3  Open the web app in your browser
-  4  Check my setup
-  5  Download the models now (so nothing downloads later)
-  0  Exit
-```
+The first time, if the models weren't downloaded during the install, they download first (4 to 7 GB, with progress in that window), and then the browser opens.
 
-The user types a number and presses Enter:
+On the page:
 
-- **1:** asks for the file (they can drag it into the window), whether to make subtitles, and the language (Enter detects it).
-- **2:** asks for the audio or video file, then for the script (`.txt`).
+- **Left:** the audio or video file (drop it in or click to choose), **Language** (Auto detects it), **Quality** (Auto, Fast = 0.6B model, Best = 1.7B model), **Names and terms** (like `--hint`), **Script** (optional: paste the exact words for script-accurate subtitles), and the **Transcribe** button.
+- **Right:** a **Preview** that plays the file with the subtitles on it (formats the browser can't play, like MKV or AVI, get an audio preview), then the subtitle controls: **Characters per line** (10 to 60), **Words per line** (Any, or 1 for one word at a time), **Lines** (1 or 2 per subtitle), **Style** (UPPERCASE, No punctuation). Changing them re-cuts the subtitles at once from the saved word timings, without transcribing again.
+- **Subtitles** and **Text** tabs show the result. **Download** has the `.srt`, `.txt` and `.words.json`, which are also saved in the `output` folder. **Open the output folder** opens it.
 
-**Dragging files:** dragging a file from File Explorer or Finder into the terminal window types its full path. Then press Enter.
+The first file after starting takes longer (the models load). With enough memory, the models stay loaded, so the next files are quick.
+
+**A simple menu in the terminal** is still there for people who prefer it: `./transcribe menu` (1 transcribe a file, 2 subtitles from a script, 3 the browser app, 4 check the setup, 5 download the models). Dragging a file into the terminal window types its path.
 
 ## 4. Commands
 
@@ -204,10 +202,16 @@ The user types a number and presses Enter:
     --script FILE.txt   use the exact words of this script for the subtitles
     --max-chars N       longest subtitle line, 8 to 80 characters (default 42;
                         18 for Chinese, Japanese and Korean)
+    --max-words N       at most N words per line, 1 to 30 (1 = one word at a time)
+    --lines 1|2         lines per subtitle (default 1)
+    --caps              subtitles in CAPITALS
+    --no-punctuation    subtitles without punctuation (inside words, like "don't", it stays)
     --quality fast|best fast = 0.6B model, best = 1.7B model (default: chosen for your computer)
     --out PATH          where to save, without extension (default: the output folder)
 
-./transcribe app                      open the official Qwen web app in the browser
+./transcribe                          open the browser app (section 3)
+./transcribe app --no-browser         start the browser app without opening a browser
+./transcribe menu                     a simple menu in the terminal
 ./transcribe download [text|subtitles|all]   download the models now
 ./transcribe check                    check that everything works
 ./transcribe help                     show the commands
@@ -224,13 +228,15 @@ Transcribing also accepts `--device cpu` (to avoid the graphics card) and `--pre
 ./transcribe my-video.mp4 --hint "Clipizo, DaVinci Resolve"
 ./transcribe podcast.wav --language Spanish --no-subtitles
 ./transcribe vertical-short.mp4 --max-chars 20
+./transcribe reel.mp4 --max-words 1 --caps --no-punctuation
+./transcribe film.mp4 --lines 2
 ```
 
 - **Files:** almost any audio or video: mp3, wav, m4a, aac, flac, ogg, mp4, mov, mkv, webm...
 - **Long recordings** are processed in parts of about 3 minutes, with progress and the time left. An hour of audio is fine; it just takes longer.
 - `--hint` helps with names, brands and technical terms.
 - `--language` helps when the language is detected wrong, or when the recording mixes languages.
-- **Subtitle lines** follow the sentences: each sentence starts a new line, and long sentences are split evenly, preferably after a comma. A line has at most about 42 characters (18 for Chinese, Japanese and Korean; change it with `--max-chars`) and lasts at most 6 seconds.
+- **Subtitle lines** follow the sentences: each sentence starts a new subtitle, and long sentences are split evenly, preferably after a comma. A line has at most about 42 characters (18 for Chinese, Japanese and Korean; change it with `--max-chars`) and lasts at most 6 seconds. With `--max-words`, lines also have at most that many words. With `--lines 2`, a subtitle shows up to two balanced lines (a short one stays on one line). These options only change the `.srt`; the `.words.json` always has every word.
 
 ### Subtitles with the exact words of a script
 
@@ -255,13 +261,13 @@ When the words are known, for example for a voiceover read from a script, the su
 
 The editor's menus may differ by version; the help of each program explains its current steps. The `.words.json` file has every word's timing, for tools that animate captions word by word.
 
-## 7. The web app
+## 7. More about the browser app
 
-```
-./transcribe app
-```
-
-This is the official Qwen demo app, with timestamps. The browser opens by itself when the app is ready (loading the models can take a minute; the first time, it also downloads them). Keep the terminal window open while using it; press Ctrl+C there to stop. The app only runs on this computer (`127.0.0.1`); it isn't visible on the network. For long recordings, subtitles files and scripts, use the command or the menu.
+- It only runs on this computer (`127.0.0.1`); it isn't visible on the network, and nothing is uploaded anywhere. "Upload" in the page only means handing the file to Transcribe on the same computer.
+- To stop it, close the window that started it (or press Ctrl+C in it).
+- If the browser doesn't open by itself, open the address the window prints, for example `http://127.0.0.1:7860`.
+- One file at a time: a second click on **Transcribe** waits until the first file is done.
+- For many files at once, the command (`./transcribe a.mp4 b.mp4 c.mp4`) is quicker.
 
 ## 8. Troubleshooting
 
@@ -296,7 +302,9 @@ This is the official Qwen demo app, with timestamps. The browser opens by itself
 | Subtitles are a little early or late in one place | Usually a long silence, music or background noise. Shorter files, or a cleaner recording, help. |
 | The error mentions "nan" or "inf" | Add `--precision float32` (common on older NVIDIA cards). |
 | A Mac error mentioning "MPS" | Add `--device cpu` (slower, but always works). |
-| `./transcribe app` doesn't open the browser | Open the address it prints (for example `http://127.0.0.1:7860`) yourself. |
+| The browser doesn't open by itself | Open the address the window prints (for example `http://127.0.0.1:7860`) yourself. |
+| The browser page says it can't connect, or stopped working | The window that started Transcribe was closed: start it again (section 3). |
+| The preview shows no picture | The browser can't play that video format (some MKV, AVI or HEVC files). The subtitles and the files are still right. |
 | Anything else | Run `./transcribe check` and paste its output, plus the error text or `last-error.txt`, to your AI assistant. |
 
 ## 9. Downloading models manually

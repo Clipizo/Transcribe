@@ -14,10 +14,10 @@ This repository contains only Transcribe's own files. It does **not** include th
 
 | Software | License | Source |
 |---|---|---|
-| qwen-asr (the official Python package, including its demo web app) | Apache License 2.0 | https://github.com/QwenLM/Qwen3-ASR |
+| qwen-asr (the official Python package) | Apache License 2.0 | https://github.com/QwenLM/Qwen3-ASR |
 | PyTorch | BSD 3-Clause | https://pytorch.org |
 | Transformers, Accelerate, huggingface_hub | Apache License 2.0 | https://github.com/huggingface |
-| Gradio (used by the demo web app) | Apache License 2.0 | https://www.gradio.app |
+| Gradio (the browser app) | Apache License 2.0 | https://www.gradio.app |
 | librosa | ISC | https://librosa.org |
 | soundfile, NumPy, SciPy | BSD 3-Clause | https://pypi.org |
 | nagisa (Japanese word splitting) and soynlp (Korean word splitting), used for subtitle timing | MIT and GPL-3.0 | https://github.com/taishi-i/nagisa, https://github.com/lovit/soynlp |

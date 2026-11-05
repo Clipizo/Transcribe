@@ -113,7 +113,8 @@ def speed_note(settings: dict) -> str:
 # ---------------------------------------------------------------------------
 
 def cmd_transcribe(audio: str, language=None, subtitles=True, hint=None, quality=None, out=None,
-                   script=None, max_chars=None, precision=None, device=None) -> dict:
+                   script=None, max_chars=None, precision=None, device=None, max_words=None,
+                   lines=None, caps=False, no_punctuation=False) -> dict:
     if not audio:
         raise UserError("Give me an audio or video file, for example:\n"
                         f"  {CMD} my-video.mp4")
@@ -136,6 +137,8 @@ def cmd_transcribe(audio: str, language=None, subtitles=True, hint=None, quality
             subtitles = True
     if max_chars is not None and not 8 <= max_chars <= 80:
         raise UserError("--max-chars must be between 8 and 80 (characters per subtitle line).")
+    if max_words is not None and not 1 <= max_words <= 30:
+        raise UserError("--max-words must be between 1 and 30 (words per subtitle line).")
     settings = C.load_settings()
     size = C.resolve_size(quality, settings)
     if out:
@@ -148,6 +151,7 @@ def cmd_transcribe(audio: str, language=None, subtitles=True, hint=None, quality
         say(note)
     job = {"input": str(src), "language": lang, "subtitles": subtitles, "hint": hint or "",
            "size": size, "out_base": str(out_base), "script": script_text, "max_chars": max_chars,
+           "max_words": max_words, "lines": lines, "caps": caps, "no_punctuation": no_punctuation,
            "precision": precision, "device": device}
     result = run_worker("transcribe", job) or {}
     say("\nDone! Saved:")
@@ -246,39 +250,38 @@ def free_port(start: int = 7860) -> int:
     raise UserError("I couldn't find a free network port for the web app.")
 
 
-def _open_when_ready(url: str, proc: subprocess.Popen) -> None:
+def _open_when_ready(url: str, proc: subprocess.Popen, open_browser: bool = True) -> None:
     for _ in range(1800):
         if proc.poll() is not None:
             return
         try:
             with urllib.request.urlopen(url, timeout=2):
                 pass
-            say(f"\nThe web app is open at {url}  (keep this window open while you use it;"
-                " press Ctrl+C here to stop it)\n")
-            webbrowser.open(url)
+            say(f"\nTranscribe is open in your browser: {url}\n"
+                "Keep this window open while you use it. To stop Transcribe, close this window.\n")
+            if open_browser:
+                webbrowser.open(url)
             return
         except Exception:
             time.sleep(1)
 
 
-def cmd_app(quality=None) -> None:
+def cmd_app(quality=None, open_browser: bool = True) -> None:
+    """Transcribe in the browser (app/webapp.py, which runs in envs/asr) until the window is closed."""
+    require_installed()
     settings = C.load_settings()
-    device = settings.get("device", "cpu")
-    dtype = settings.get("dtype", "float32")
-    device_arg = "cuda:0" if device == "cuda" else device
-    asr, aligner = C.ASR_MODELS[C.resolve_size(quality, settings)], C.ALIGNER_MODEL
-    run_worker("download", extra=["--repo", asr, "--repo", aligner])
+    repos = [C.ASR_MODELS[C.resolve_size(quality, settings)], C.ALIGNER_MODEL]
+    if not all(C.model_is_downloaded(r) for r in repos):
+        say("First, the AI models download (only once). Then Transcribe opens in your browser.\n")
+        run_worker("download", extra=[x for r in repos for x in ("--repo", r)])
     port = free_port()
     url = f"http://127.0.0.1:{port}"
-    kwargs = {"device_map": device_arg, "dtype": dtype, "max_inference_batch_size": 1, "max_new_tokens": 2048}
-    cmd = [str(C.env_python()), str(C.APP / WORKER), "app",
-           "--asr-checkpoint", str(C.model_dir(asr)), "--aligner-checkpoint", str(C.model_dir(aligner)),
-           "--backend", "transformers", "--backend-kwargs", json.dumps(kwargs),
-           "--aligner-kwargs", json.dumps({"device_map": device_arg, "dtype": dtype}),
-           "--ip", "127.0.0.1", "--port", str(port)]
-    say("Starting the web app (the official Qwen demo). Loading the models can take a minute...")
+    say("Starting Transcribe...")
+    cmd = [str(C.env_python()), str(C.APP / "webapp.py"), "--port", str(port)]
+    if quality:
+        cmd += ["--quality", quality]
     proc = subprocess.Popen(cmd, env=C.child_env(), cwd=str(C.KIT))
-    threading.Thread(target=_open_when_ready, args=(url, proc), daemon=True).start()
+    threading.Thread(target=_open_when_ready, args=(url, proc, open_browser), daemon=True).start()
     try:
         code = proc.wait()
     except KeyboardInterrupt:
@@ -379,7 +382,7 @@ def run_menu() -> None:
             say("\n  Transcribe isn't installed yet. " + install_hint())
         say("\n  1  Transcribe audio or video (text + subtitles)")
         say("  2  Subtitles from my script (exact words, for example a voiceover)")
-        say("  3  Open the web app in your browser")
+        say("  3  Open Transcribe in your browser")
         say("  4  Check my setup")
         say("  5  Download the models now (so nothing downloads later)")
         say("  0  Exit")
@@ -412,7 +415,7 @@ def run_menu() -> None:
 
 HELP = f"""{C.KIT_NAME} {C.KIT_VERSION} - free transcripts and subtitles on your own computer.
 
-Run without anything for a simple menu:   {CMD}
+Run without anything to open Transcribe in your browser:   {CMD}
 
   {CMD} my-video.mp4                 audio or video to text + subtitles
       --language NAME   force the language (normally detected)
@@ -420,11 +423,16 @@ Run without anything for a simple menu:   {CMD}
       --hint "WORDS"    names and terms to expect, e.g. "Clipizo, DaVinci Resolve"
       --script FILE     use the exact words of your script for the subtitles
       --max-chars N     longest subtitle line (default 42; 18 for Chinese, Japanese, Korean)
+      --max-words N     at most N words per line (1 = one word at a time)
+      --lines 1|2       lines per subtitle (default 1)
+      --caps            subtitles in CAPITALS
+      --no-punctuation  subtitles without punctuation
       --quality fast|best
       --out PATH        where to save, without extension (default: the output folder)
   {CMD} a.mp3 b.mp3 c.mp4            several files, one after the other
 
-  {CMD} app                          open the official web app in your browser
+  {CMD} app                          open Transcribe in your browser (add --no-browser to only start it)
+  {CMD} menu                         a simple menu in this window
   {CMD} download [text|subtitles|all]
                                      download the models now
   {CMD} check                        check that everything works
@@ -442,6 +450,10 @@ def transcribe_parser() -> argparse.ArgumentParser:
     p.add_argument("--hint")
     p.add_argument("--script")
     p.add_argument("--max-chars", type=int)
+    p.add_argument("--max-words", type=int)
+    p.add_argument("--lines", type=int, choices=[1, 2])
+    p.add_argument("--caps", action="store_true")
+    p.add_argument("--no-punctuation", action="store_true")
     p.add_argument("--quality", choices=["fast", "best", "auto"], default=None)
     p.add_argument("--out")
     p.add_argument("--precision", choices=["float32", "float16", "bfloat16"], default=None)
@@ -453,11 +465,9 @@ def main(argv=None) -> int:
     C.setup_console()
     argv = sys.argv[1:] if argv is None else argv
     if not argv:
-        if sys.stdin.isatty():
-            run_menu()
-            return 0
-        say(HELP)
-        return 0
+        # Started by a person (double-click, or ./transcribe in a terminal): open the browser app.
+        # Started by a program without a terminal: show the commands instead.
+        argv = ["app"] if sys.stdin.isatty() else ["help"]
     if argv[0] in ("help", "/?") or any(a in ("-h", "--help") for a in argv):
         say(HELP)
         return 0
@@ -467,6 +477,7 @@ def main(argv=None) -> int:
             sub.add_argument("command")
             sub.add_argument("what", nargs="?", default="all")
             sub.add_argument("--quality", choices=["fast", "best", "auto"], default=None)
+            sub.add_argument("--no-browser", action="store_true")
             try:
                 args, unknown = sub.parse_known_args(argv)
             except SystemExit:
@@ -478,7 +489,7 @@ def main(argv=None) -> int:
             if args.command == "check":
                 cmd_check()
             elif args.command == "app":
-                cmd_app(args.quality)
+                cmd_app(args.quality, open_browser=not args.no_browser)
             elif args.command == "download":
                 cmd_download(args.what, args.quality)
             elif args.command == "menu":
@@ -501,7 +512,8 @@ def main(argv=None) -> int:
             if len(args.files) > 1:
                 say(f"\n===== File {i} of {len(args.files)}: {f}")
             cmd_transcribe(f, args.language, not args.no_subtitles, args.hint, args.quality, args.out,
-                           args.script, args.max_chars, args.precision, args.device)
+                           args.script, args.max_chars, args.precision, args.device, args.max_words,
+                           args.lines, args.caps, args.no_punctuation)
     except UserError as e:
         say(f"\n{e}")
         return 2

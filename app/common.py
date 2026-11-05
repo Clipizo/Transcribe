@@ -546,12 +546,32 @@ def attach_display_text(transcript: str, items: list[tuple[str, float, float]]) 
     return out
 
 
-def _join_tokens(tokens: list[dict]) -> str:
+def _is_alnum(ch: str) -> bool:
+    return unicodedata.category(ch)[:1] in ("L", "N")
+
+
+def style_word(text: str, caps: bool = False, no_punctuation: bool = False) -> str:
+    """A word as shown in the subtitles: optionally in capitals and without the punctuation
+    around it ("Hello," -> "HELLO"). Punctuation inside a word stays: "don't", "well-known"."""
+    if no_punctuation:
+        start, end = 0, len(text)
+        while start < end and not _is_alnum(text[start]):
+            start += 1
+        while end > start and not _is_alnum(text[end - 1]):
+            end -= 1
+        text = text[start:end]
+    return text.upper() if caps else text
+
+
+def _join_tokens(tokens: list[dict], caps: bool = False, no_punctuation: bool = False) -> str:
     s = ""
     for t in tokens:
+        text = style_word(t["text"], caps, no_punctuation)
+        if not text:
+            continue
         if s and t["space_before"]:
             s += " "
-        s += t["text"]
+        s += text
     return s.strip()
 
 
@@ -560,11 +580,13 @@ def _last_mark(token: dict) -> str:
     return text[-1:] if text else ""
 
 
-def _greedy_lines(tokens: list[dict], max_chars: int, max_duration: float) -> list[list[dict]]:
+def _greedy_lines(tokens: list[dict], max_chars: int, max_duration: float,
+                  max_words: int | None = None) -> list[list[dict]]:
     lines: list[list[dict]] = []
     cur: list[dict] = []
     for tok in tokens:
-        if cur and (len(_join_tokens(cur + [tok])) > max_chars or tok["end"] - cur[0]["start"] > max_duration):
+        if cur and (len(_join_tokens(cur + [tok])) > max_chars or tok["end"] - cur[0]["start"] > max_duration
+                    or (max_words and len(cur) >= max_words)):
             lines.append(cur)
             cur = []
         cur.append(tok)
@@ -585,16 +607,18 @@ def _best_cut(tokens: list[dict], limit: int) -> int:
     return best
 
 
-def _split_line(tokens: list[dict], max_chars: int, max_duration: float) -> list[list[dict]]:
+def _split_line(tokens: list[dict], max_chars: int, max_duration: float,
+                max_words: int | None = None) -> list[list[dict]]:
     """Split one sentence into subtitle lines.
 
     Finds the split with lines of similar length (no lonely last word), preferring
-    to break after a comma, with no line longer than about max_chars or max_duration.
+    to break after a comma, with no line longer than about max_chars or max_duration,
+    and no more than max_words words (if given).
     """
     if len(tokens) > 80:  # keep the search fast for very long runs without punctuation
         cut = _best_cut(tokens, 80)
-        return (_split_line(tokens[:cut], max_chars, max_duration)
-                + _split_line(tokens[cut:], max_chars, max_duration))
+        return (_split_line(tokens[:cut], max_chars, max_duration, max_words)
+                + _split_line(tokens[cut:], max_chars, max_duration, max_words))
     n = len(tokens)
     widths = [len(t["text"]) for t in tokens]
     spaces = [1 if (i > 0 and t["space_before"]) else 0 for i, t in enumerate(tokens)]
@@ -610,7 +634,8 @@ def _split_line(tokens: list[dict], max_chars: int, max_duration: float) -> list
         return tokens[j - 1]["end"] - tokens[i]["start"]
 
     total = length(0, n)
-    count = max(1, math.ceil(total / max_chars), math.ceil(seconds(0, n) / max_duration))
+    count = max(1, math.ceil(total / max_chars), math.ceil(seconds(0, n) / max_duration),
+                math.ceil(n / max_words) if max_words else 1)
     if count == 1 or n == 1:
         return [tokens]
     hard_max = int(max_chars * 1.15)
@@ -624,6 +649,8 @@ def _split_line(tokens: list[dict], max_chars: int, max_duration: float) -> list
             for j in range(k, n + 1):
                 for i in range(max(k - 1, j - 40), j):
                     if best[k - 1][i] == inf:
+                        continue
+                    if max_words and j - i > max_words:
                         continue
                     if j - i > 1 and (length(i, j) > hard_max or seconds(i, j) > max_duration):
                         continue
@@ -640,16 +667,46 @@ def _split_line(tokens: list[dict], max_chars: int, max_duration: float) -> list
                 lines.append(tokens[i:j])
                 j = i
             return lines[::-1]
-    return _greedy_lines(tokens, max_chars, max_duration)
+    return _greedy_lines(tokens, max_chars, max_duration, max_words)
+
+
+def _fits_one_line(tokens: list[dict], max_chars: int, max_words: int | None) -> bool:
+    return len(_join_tokens(tokens)) <= max_chars and (not max_words or len(tokens) <= max_words)
+
+
+def _two_lines(tokens: list[dict], max_words: int | None) -> list[list[dict]]:
+    """Split one subtitle into two lines of similar length, preferably after a comma."""
+    best, best_score = len(tokens) // 2, float("inf")
+    for cut in range(1, len(tokens)):
+        if max_words and (cut > max_words or len(tokens) - cut > max_words):
+            continue
+        score = max(len(_join_tokens(tokens[:cut])), len(_join_tokens(tokens[cut:])))
+        if _last_mark(tokens[cut - 1]) in CLAUSE_END:
+            score -= 4  # a comma is a natural place to break
+        if score < best_score:
+            best, best_score = cut, score
+    return [tokens[:best], tokens[best:]]
+
+
+def default_max_chars(tokens: list[dict]) -> int:
+    """Characters per subtitle line: 18 for Chinese, Japanese and Korean, 42 otherwise."""
+    return 18 if mostly_cjk("".join(t["text"] for t in tokens)) else 42
 
 
 def build_cues(tokens: list[dict], max_chars: int | None = None, max_duration: float = 6.0,
-               max_gap: float = 0.9, min_duration: float = 0.7) -> list[dict]:
-    """Group timed words into subtitle lines: one sentence (or part of one) per line."""
+               max_gap: float = 0.9, min_duration: float = 0.7, max_words: int | None = None,
+               lines: int = 1, caps: bool = False, no_punctuation: bool = False) -> list[dict]:
+    """Group timed words into subtitles.
+
+    Each sentence starts a new subtitle. A subtitle has up to `lines` lines (1 or 2) of at
+    most max_chars characters and max_words words. caps and no_punctuation change only how
+    the words look.
+    """
     if not tokens:
         return []
     if max_chars is None:
-        max_chars = 18 if mostly_cjk("".join(t["text"] for t in tokens)) else 42
+        max_chars = default_max_chars(tokens)
+    lines = 2 if int(lines or 1) >= 2 else 1
     sentences: list[list[dict]] = []
     cur: list[dict] = []
     for tok in tokens:
@@ -661,12 +718,26 @@ def build_cues(tokens: list[dict], max_chars: int | None = None, max_duration: f
     if cur:
         sentences.append(cur)
 
-    cues = []
+    groups: list[list[list[dict]]] = []  # subtitles, each a list of its lines
     for sentence in sentences:
-        for line in _split_line(sentence, max_chars, max_duration):
-            start = float(line[0]["start"])
-            end = max(float(line[-1]["end"]), start + 0.05)
-            cues.append({"start": start, "end": end, "text": _join_tokens(line)})
+        if lines == 1:
+            groups += [[line] for line in _split_line(sentence, max_chars, max_duration, max_words)]
+            continue
+        # Two lines: first cut the sentence into balanced subtitles that hold two lines' worth
+        # (on screen up to a second longer), then split each one into two even lines.
+        for chunk in _split_line(sentence, 2 * max_chars + 1, max_duration + 1.0,
+                                 2 * max_words if max_words else None):
+            groups.append([chunk] if _fits_one_line(chunk, max_chars, max_words) or len(chunk) == 1
+                          else _two_lines(chunk, max_words))
+
+    cues = []
+    for group in groups:
+        text = "\n".join(t for t in (_join_tokens(line, caps, no_punctuation) for line in group) if t)
+        if not text:
+            continue  # only punctuation, and that is hidden
+        start = float(group[0][0]["start"])
+        end = max(float(group[-1][-1]["end"]), start + 0.05)
+        cues.append({"start": start, "end": end, "text": text})
     for i, cue in enumerate(cues):
         next_start = cues[i + 1]["start"] if i + 1 < len(cues) else None
         if cue["end"] - cue["start"] < min_duration:

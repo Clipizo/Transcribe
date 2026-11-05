@@ -4,7 +4,7 @@
 
 Turn **audio and video into text and subtitles** on your own computer, for free. No account, no subscription, no upload limits, and your recordings never leave your computer.
 
-Transcribe is a beginner-friendly kit for **Qwen3-ASR**, the free, open speech-recognition models from the Qwen team. It installs everything into one folder, and you use it from a simple menu, with one short command, or through your AI assistant.
+Transcribe is a beginner-friendly kit for **Qwen3-ASR**, the free, open speech-recognition models from the Qwen team. It installs everything into one folder, and you use it in your browser, with one short command, or through your AI assistant.
 
 <p align="center">
   <img src="assets/how-it-works.svg" alt="How it works: 1. your audio or video file, 2. Transcribe listens on your own computer, in 30 languages, 3. you get the text, subtitles and word timings" width="100%">
@@ -75,7 +75,7 @@ It works through 4 steps. Downloading PyTorch (about 3 GB with an NVIDIA graphic
 ```powershell
 ./transcribe
 ```
-The menu opens. Type `1`, press Enter, and drag a video or audio file into the window.
+Transcribe opens in your browser. Drop in a video or audio file and click **Transcribe**. Keep the PowerShell window open while you use it.
 
 **If a step shows red text:**
 - **Step 2:** check your internet connection and paste the command again.
@@ -125,6 +125,7 @@ bash install.sh
 ```bash
 ./transcribe
 ```
+Transcribe opens in your browser. Keep the Terminal window open while you use it.
 
 Installed Transcribe before? Then before step 5, keep the old folder under another name with `mv ~/Transcribe ~/Transcribe-old`.
 
@@ -156,22 +157,24 @@ You need one of the two speech-to-text models, fast (0.6B) or best quality (1.7B
 **To download them in advance,** for example before you go offline:
 
 - answer yes when the installer asks *"Download the AI models now?"*;
-- or choose **5 Download the models now** in the menu;
 - or run `./transcribe download`.
 
 **If your network blocks Hugging Face,** download every file from the model's page above (or from ModelScope, which is easier to reach in mainland China) into `models/<model name>/` in the Transcribe folder, keeping its subfolders. Then create an empty file named `.download-complete` in that folder. Section 9 of the [AI guide](Transcribe%20AI%20Guide.md) explains it step by step.
 
 ## Using Transcribe
 
-Transcribe starts with a simple menu. Type a number and press Enter, then drag your file into the window when it asks. The results go to the **`output`** folder.
+Start Transcribe (double-click `transcribe.bat` on Windows, or run `./transcribe` in the Transcribe folder) and it opens in your browser:
 
-<p align="center">
-  <img src="assets/menu.svg" alt="The Transcribe menu: 1 transcribe audio or video, 2 subtitles from my script, 3 open the web app in your browser, 4 check my setup, 5 download the models now, 0 exit" width="100%">
-</p>
+1. Drop in an audio or video file. If you like, add names and terms it should know, the language, or your script.
+2. Click **Transcribe**.
+3. Shape the subtitles: characters per line, words per line (1 = one word at a time), 1 or 2 lines, UPPERCASE, no punctuation. The preview shows them on your video right away, without transcribing again.
+4. Download the subtitles (`.srt`), the text (`.txt`) and the word timings (`.words.json`). They're also in the **`output`** folder.
+
+It runs only on your computer. Keep the window that started it open while you use it; close it to stop Transcribe.
 
 ### Or use commands
 
-You can also skip the menu and type a command. Open PowerShell (Windows) or Terminal (Mac and Linux), go into the Transcribe folder as in the install steps, and type one of these. The commands are the same on every system.
+You can also type a command. Open PowerShell (Windows) or Terminal (Mac and Linux), go into the Transcribe folder as in the install steps, and type one of these. The commands are the same on every system.
 
 | What | Command |
 |---|---|
@@ -181,9 +184,12 @@ You can also skip the menu and type a command. Open PowerShell (Windows) or Term
 | Force the language | `./transcribe lecture.m4a --language Spanish` |
 | Subtitles with your script's exact words | `./transcribe voiceover.wav --script my-script.txt` |
 | Short lines for vertical videos | `./transcribe short.mp4 --max-chars 20` |
+| One word at a time, in capitals | `./transcribe short.mp4 --max-words 1 --caps --no-punctuation` |
+| Two lines per subtitle | `./transcribe film.mp4 --lines 2` |
 | Several files | `./transcribe part1.mp4 part2.mp4 part3.mp4` |
 | A file name with spaces (use quote marks) | `./transcribe "my holiday video.mp4"` |
-| The browser app | `./transcribe app` |
+| Open it in the browser | `./transcribe` |
+| A simple menu in the terminal | `./transcribe menu` |
 | Check the setup | `./transcribe check` |
 
 `./transcribe help` lists every option.
@@ -210,7 +216,7 @@ Transcribe picks the best settings for your computer automatically. `--quality f
 | File or folder | Contents |
 |---|---|
 | `install-windows.bat`, `install.sh` | The installers. Run them again at any time to repair the install. |
-| `transcribe.bat`, `transcribe.sh` | Start Transcribe (menu or commands). On Mac and Linux the installer also adds a `transcribe` shortcut, so `./transcribe` works everywhere. |
+| `transcribe.bat`, `transcribe.sh` | Start Transcribe (the browser app, or commands). On Mac and Linux the installer also adds a `transcribe` shortcut, so `./transcribe` works everywhere. |
 | `Transcribe AI Guide.md` | Everything an AI assistant needs to help you, step by step, including troubleshooting. |
 | `AGENTS.md`, `SKILL.md` | Instructions for AI agents. `CLAUDE.md` and `GEMINI.md` point to them. |
 | `app/` | The Transcribe program. |
