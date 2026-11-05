@@ -12,7 +12,6 @@ Transcribe is a beginner-friendly kit for **[Qwen3-ASR](https://github.com/QwenL
 
 > Transcribe is an unofficial kit made by Clipizo. It is not affiliated with or endorsed by Alibaba Cloud or the Qwen team.
 > The official Qwen3-ASR source code is on GitHub: **[QwenLM/Qwen3-ASR](https://github.com/QwenLM/Qwen3-ASR)**.
-> Want AI voiceovers? See the companion kit **[AIvoice](https://github.com/Clipizo/AIvoice)**.
 
 ## What you need
 

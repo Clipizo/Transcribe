@@ -47,7 +47,6 @@ The terminal must be **in the Transcribe folder** (section 4 explains how). File
 - The models download automatically from Hugging Face (huggingface.co) into the `models` folder the first time they're needed (about 4 to 7 GB in total, once). Section 9 lists every model with its download page.
 - **Text in 30 languages:** Chinese, English, Cantonese, Arabic, German, French, Spanish, Portuguese, Indonesian, Italian, Korean, Russian, Thai, Vietnamese, Japanese, Turkish, Hindi, Malay, Dutch, Swedish, Danish, Finnish, Polish, Czech, Filipino, Persian, Greek, Romanian, Hungarian, Macedonian, plus 22 Chinese dialects. The language is detected automatically.
 - **Subtitle timings in 11 languages:** Chinese, English, Cantonese, French, German, Italian, Japanese, Korean, Portuguese, Russian, Spanish. For other languages, Transcribe saves the text only.
-- To make voiceovers, there is a companion kit: AIvoice (`https://github.com/Clipizo/AIvoice`).
 
 ## 2. Install
 
@@ -248,7 +247,7 @@ When the words are known, for example for a voiceover read from a script, the su
 
 - The script must be what is spoken, in the same order. Markdown marks (`#`, `**`, bullets) are removed. Each line of the script starts a new subtitle line.
 - For recordings up to about 3 minutes, Transcribe only times the words. For longer ones, it first listens to find where each part of the script is spoken, so small differences between the script and the recording are fine.
-- **With AIvoice:** AIvoice saves the text of each voiceover next to it, so `./transcribe output/my-script.wav --script output/my-script.txt` (run from the Transcribe folder, with the full paths to the AIvoice files) gives perfect subtitles.
+- **AI voiceovers:** use the text you gave the voice generator as the script (`--script`, or the Script box in the browser app): the subtitles then have exactly its words.
 
 ## 6. Subtitles in video editors
 

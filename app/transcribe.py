@@ -438,7 +438,6 @@ Run without anything to open Transcribe in your browser:   {CMD}
   {CMD} check                        check that everything works
 
 Results are saved in the output folder: NAME.txt, NAME.srt and NAME.words.json.
-To make voiceovers, use the AIvoice kit: https://github.com/Clipizo/AIvoice
 """
 
 
