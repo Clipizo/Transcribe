@@ -271,6 +271,7 @@ This is the official Qwen demo app, with timestamps. The browser opens by itself
 | The installer window closes immediately, or Windows opens the file in Notepad | Make sure the ZIP was extracted (section 2) and double-click `install-windows.bat` itself. |
 | "It looks like you started the installer from inside the ZIP file" | Extract the ZIP first, move the folder to `C:\Transcribe`, and run the installer from there. |
 | "Could not download uv" | No internet, or the network blocks `astral.sh` or `github.com` (some school and office networks). Try another network. |
+| Windows: the installer says a Microsoft component is missing, or an error mentions `c10.dll`, `WinError 126` or "DLL load failed" | Install Microsoft's free Visual C++ Redistributable from `https://aka.ms/vs/17/release/vc_redist.x64.exe`, restart the computer, and run the installer again. |
 | The install looks stuck | The PyTorch download is large; wait. On Windows, if the window title starts with "Select", press Esc (clicking the window pauses it). |
 | A warning about a long path, OneDrive, iCloud or special characters | Move the folder to `C:\Transcribe` (Windows) or the home folder (Mac), then run the installer again with `--repair`. |
 | "Transcribe isn't installed yet" | Run the installer (section 2). If it ran, look at the end of its window or `install-log.txt` for the error. |

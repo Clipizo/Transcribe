@@ -261,6 +261,26 @@ def check_folder(assume_yes: bool) -> None:
         raise InstallError("Install stopped. Move the folder and run the installer again.")
 
 
+VC_REDIST_URL = "https://aka.ms/vs/17/release/vc_redist.x64.exe"
+VC_REDIST_HELP = ("Windows is missing a free Microsoft component that PyTorch needs: the\n"
+                  "'Microsoft Visual C++ Redistributable'. Download it from Microsoft and run it:\n"
+                  f"  {VC_REDIST_URL}\n"
+                  "Then restart the computer and run this installer again.")
+
+
+def windows_runtime_missing() -> list[str]:
+    """The Microsoft Visual C++ runtime files PyTorch needs on Windows, if any are missing."""
+    if not C.IS_WINDOWS:
+        return []
+    system32 = Path(os.environ.get("SystemRoot", r"C:\Windows")) / "System32"
+    return [n for n in ("msvcp140.dll", "vcruntime140.dll", "vcruntime140_1.dll") if not (system32 / n).exists()]
+
+
+def is_windows_dll_error(text: str) -> bool:
+    return C.IS_WINDOWS and any(k in text for k in ("WinError 126", "DLL load failed", "c10.dll",
+                                                    "vc_redist", "Visual C++"))
+
+
 # ---------------------------------------------------------------------------
 # Installing
 # ---------------------------------------------------------------------------
@@ -434,6 +454,8 @@ def main() -> int:
         describe(info)
         check_supported(info)
         check_folder(args.yes)
+        if windows_runtime_missing():
+            log("WARNING: " + VC_REDIST_HELP)
         free = info.get("disk_free_gb")
         if free is not None and free < 12:
             log(f"WARNING: only {free:.0f} GB free. {C.KIT_NAME} needs about 6 GB for the programs and")
@@ -467,8 +489,10 @@ def main() -> int:
             install_env(uv, index, False)
             p = probe()
         if not p.get("package_ok"):
-            raise InstallError("The installation doesn't load:\n  "
-                               f"{p.get('package_error') or p.get('torch_error') or p.get('error')}")
+            problem = p.get("package_error") or p.get("torch_error") or p.get("error") or ""
+            if is_windows_dll_error(problem):
+                raise InstallError(VC_REDIST_HELP)
+            raise InstallError(f"The installation doesn't load:\n  {problem}")
         where = ("NVIDIA " + str(p.get("gpu"))) if p.get("cuda_ok") else ("Apple Silicon" if p.get("mps") else "processor")
         log(f"  OK: Python {p.get('python')}, PyTorch {p.get('torch')}, runs on {where}")
         if not p.get("ffmpeg"):
