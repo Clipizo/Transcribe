@@ -275,7 +275,7 @@ The editor's menus may differ by version; the help of each program explains its 
 | "Windows protected your PC" | Click **More info** > **Run anyway**. |
 | The installer window closes immediately, or Windows opens the file in Notepad | Make sure the ZIP was extracted (section 2) and double-click `install-windows.bat` itself. |
 | "It looks like you started the installer from inside the ZIP file" | Extract the ZIP first, move the folder to `C:\Transcribe`, and run the installer from there. |
-| "Could not download uv" | No internet, or the network blocks `astral.sh` or `github.com` (some school and office networks). Try another network. |
+| "Could not download uv" | No internet, or the network blocks `astral.sh` or `github.com` (some school and office networks). Try another network. It isn't caused by an old Windows 10: the installer turns on the secure connection type it needs. Downloading the ZIP by clicking doesn't help here, because the installer downloads uv either way. |
 | Mac or Linux: `unzip: command not found` | Use the steps in section 2: they download a `.tar.gz` and unpack it with `tar -xzf Transcribe.tar.gz`, which every Mac and Linux has. |
 | Linux: `curl: command not found` | Download with `wget -O Transcribe.tar.gz https://github.com/Clipizo/Transcribe/archive/refs/heads/main.tar.gz` instead. |
 | "Please run the installer without sudo" | Run `bash install.sh` without `sudo`. If an earlier run with `sudo` left files the user can't change ("Permission denied" inside the Transcribe folder), give the folder back once with `sudo chown -R "$USER" ~/Transcribe`, then run the installer again. |
