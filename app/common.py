@@ -218,9 +218,13 @@ def child_env() -> dict:
         "HF_HOME": str(TOOLS / "hf-home"),
         "HF_HUB_DISABLE_SYMLINKS_WARNING": "1",
         "HF_HUB_DISABLE_TELEMETRY": "1",
-        # Hide Hugging Face's technical notes (retries, "install hf_xet with pip"): they look like
-        # errors to beginners. Real errors still show, and ensure_model explains them.
+        # Hide Hugging Face's technical notes (retries and the like): they look like errors to
+        # beginners. Real errors still show, and ensure_model explains them.
         "HF_HUB_VERBOSITY": "error",
+        # Download models the plain way on every system. It resumes after a dropped connection.
+        # (Xet, tested on a slow home connection, slowed to one connection at about 35 KB/s,
+        # stopped writing the file and filled its log with thousands of lines a minute.)
+        "HF_HUB_DISABLE_XET": "1",
         "HF_XET_CHUNK_CACHE_SIZE_BYTES": "0",
         "TOKENIZERS_PARALLELISM": "false",
         "TRANSFORMERS_VERBOSITY": "error",

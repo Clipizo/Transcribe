@@ -210,8 +210,9 @@ def apple_silicon() -> bool:
 
 def detect() -> dict:
     info = {
-        "os": platform.system(),
-        "os_version": platform.release(),
+        # On a Mac, say "macOS 15.2" (what people know), not "Darwin 24.2.0".
+        "os": "macOS" if C.IS_MAC else platform.system(),
+        "os_version": (platform.mac_ver()[0] or platform.release()) if C.IS_MAC else platform.release(),
         "machine": platform.machine().lower(),
         "ram_gb": ram_gb(),
         "apple_silicon": apple_silicon(),
@@ -444,7 +445,7 @@ def make_settings(info: dict, p: dict, index: str) -> dict:
         vram = p.get("vram_gb") or 0
         s.update(device="cuda", dtype=dtype, gpu=p.get("gpu"), vram_gb=vram)
     elif p.get("mps"):
-        s.update(device="mps", dtype="float32", ram_gb=round(ram))
+        s.update(device="mps", dtype=p.get("mps_dtype") or "float16", ram_gb=round(ram))
     else:
         s.update(device="cpu", dtype="float32", ram_gb=round(ram))
     s[SIZE_KEY] = default_size(s["device"], s.get("vram_gb") or 0, ram, s["dtype"])
@@ -598,6 +599,7 @@ def main() -> int:
                                         *[x for r in repos for x in ("--repo", r)]],
                                        env=C.child_env(), cwd=str(C.KIT))
                 if code != 0:
+                    log("")  # the download's progress bar may have left the cursor on its line
                     log("The model download didn't finish. That's OK: it continues the first time you use it.")
     except InstallError as e:
         log("")
