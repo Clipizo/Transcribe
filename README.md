@@ -15,7 +15,7 @@ Transcribe is a beginner-friendly kit for **Qwen3-ASR**, the free, open speech-r
 
 ## What you need
 
-- **Free disk space: about 15 GB.** The programs take about 7 GB (less without an NVIDIA graphics card). The AI models take about 4 to 7 GB and download the first time you use Transcribe.
+- **Free disk space: about 15 GB.** The programs take about 7 GB (less without an NVIDIA graphics card). The AI models take about 4 to 7 GB and download by themselves the first time you use Transcribe (see [The AI models](#the-ai-models)).
 - **A computer:** a Windows 10 or 11 PC, a Mac with Apple Silicon (M1 or newer), or a Linux PC. Intel Macs and Windows on ARM aren't supported.
 - **A graphics card (optional):** with an NVIDIA graphics card (6 GB or more; 8 GB or more for best quality) or on a Mac it's quick. Without either, it runs on the processor: it works, but long recordings take a while.
 - **An internet connection** for the install (about 3 GB with an NVIDIA card, less without) and the first download of the models.
@@ -121,6 +121,26 @@ No `git`? Use the Mac commands (with `curl` and `unzip`) instead.
 
 - **Windows:** double-click `transcribe.bat` in the `C:\Transcribe` folder.
 - **Mac and Linux:** in Terminal, run `cd ~/Transcribe` and then `./transcribe`.
+
+## The AI models
+
+Transcribe uses the official **Qwen3-ASR** models from the Qwen team. **You don't need to download them yourself:** Transcribe downloads them from [Hugging Face](https://huggingface.co/Qwen) the first time you use it, and keeps them in the `models` folder. Each model downloads only once, and an interrupted download continues where it stopped.
+
+| Model | What it's for | Size | Download page |
+|---|---|---|---|
+| `Qwen3-ASR-1.7B` | Speech to text, best quality | about 4.7 GB | [Hugging Face](https://huggingface.co/Qwen/Qwen3-ASR-1.7B) · [ModelScope](https://modelscope.cn/models/Qwen/Qwen3-ASR-1.7B) |
+| `Qwen3-ASR-0.6B` | Speech to text, fast | about 1.9 GB | [Hugging Face](https://huggingface.co/Qwen/Qwen3-ASR-0.6B) · [ModelScope](https://modelscope.cn/models/Qwen/Qwen3-ASR-0.6B) |
+| `Qwen3-ForcedAligner-0.6B` | Word timings for subtitles | about 1.9 GB | [Hugging Face](https://huggingface.co/Qwen/Qwen3-ForcedAligner-0.6B) · [ModelScope](https://modelscope.cn/models/Qwen/Qwen3-ForcedAligner-0.6B) |
+
+You need one of the two speech-to-text models, fast (0.6B) or best quality (1.7B), which the installer picks for your computer, plus the timing model for subtitles.
+
+**To download them in advance,** for example before you go offline:
+
+- answer yes when the installer asks *"Download the AI models now?"*;
+- or choose **5 Download the models now** in the menu;
+- or run `./transcribe download`.
+
+**If your network blocks Hugging Face,** download every file from the model's page above (or from ModelScope, which is easier to reach in mainland China) into `models/<model name>/` in the Transcribe folder, keeping its subfolders. Then create an empty file named `.download-complete` in that folder. Section 9 of the [AI guide](Transcribe%20AI%20Guide.md) explains it step by step.
 
 ## Using Transcribe
 

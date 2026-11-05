@@ -44,7 +44,7 @@ The terminal must be **in the Transcribe folder** (section 4 explains how). File
 | Browser app | `./transcribe app` | the official Qwen demo app |
 
 - Everything runs on the user's computer. Nothing is uploaded; there is no account and no cost.
-- The models download automatically the first time they're needed (about 4 to 7 GB in total, once).
+- The models download automatically from Hugging Face (huggingface.co) into the `models` folder the first time they're needed (about 4 to 7 GB in total, once). Section 9 lists every model with its download page.
 - **Text in 30 languages:** Chinese, English, Cantonese, Arabic, German, French, Spanish, Portuguese, Indonesian, Italian, Korean, Russian, Thai, Vietnamese, Japanese, Turkish, Hindi, Malay, Dutch, Swedish, Danish, Finnish, Polish, Czech, Filipino, Persian, Greek, Romanian, Hungarian, Macedonian, plus 22 Chinese dialects. The language is detected automatically.
 - **Subtitle timings in 11 languages:** Chinese, English, Cantonese, French, German, Italian, Japanese, Korean, Portuguese, Russian, Spanish. For other languages, Transcribe saves the text only.
 - To make voiceovers, there is a companion kit: AIvoice (`https://github.com/Clipizo/AIvoice`).
@@ -300,7 +300,15 @@ If `huggingface.co` is blocked on the network, the model files can be put in pla
 2. Put the files in `models/MODEL-NAME/` inside the Transcribe folder, for example `models/Qwen3-ASR-1.7B/config.json`.
 3. Create an empty file named `.download-complete` in that folder, so Transcribe uses it without going online.
 
-Model names: `Qwen3-ASR-1.7B` and `Qwen3-ASR-0.6B` (text), `Qwen3-ForcedAligner-0.6B` (subtitle timings).
+The models and their download pages:
+
+| Model | What it's for | Size | Download page |
+|---|---|---|---|
+| `Qwen3-ASR-1.7B` | Speech to text, best quality | about 4.7 GB | [Hugging Face](https://huggingface.co/Qwen/Qwen3-ASR-1.7B) · [ModelScope](https://modelscope.cn/models/Qwen/Qwen3-ASR-1.7B) |
+| `Qwen3-ASR-0.6B` | Speech to text, fast | about 1.9 GB | [Hugging Face](https://huggingface.co/Qwen/Qwen3-ASR-0.6B) · [ModelScope](https://modelscope.cn/models/Qwen/Qwen3-ASR-0.6B) |
+| `Qwen3-ForcedAligner-0.6B` | Word timings for subtitles | about 1.9 GB | [Hugging Face](https://huggingface.co/Qwen/Qwen3-ForcedAligner-0.6B) · [ModelScope](https://modelscope.cn/models/Qwen/Qwen3-ForcedAligner-0.6B) |
+
+Transcribe needs one speech-to-text model (the size from `envs/settings.json`) plus the timing model.
 
 ## 10. Speed, quality, updates
 
