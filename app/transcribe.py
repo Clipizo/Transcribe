@@ -142,7 +142,7 @@ def cmd_transcribe(audio: str, language=None, subtitles=True, hint=None, quality
         out_base = C.user_path(out).with_suffix("")
         out_base.parent.mkdir(parents=True, exist_ok=True)
     else:
-        out_base = C.unique_base(C.OUTPUT, C.safe_name(src.stem) or "transcript", [".txt", ".srt", ".words.json"])
+        out_base = C.unique_base(C.OUTPUT, C.safe_name(src.stem, 60) or "transcript", [".txt", ".srt", ".words.json"])
     note = speed_note(settings)
     if note:
         say(note)
@@ -189,7 +189,7 @@ def cmd_download(what="all", quality=None) -> None:
         say("Everything you asked for is already downloaded.")
         return
     total = sum(C.MODEL_SIZES_GB.get(repo, 0) for repo in todo)
-    say(f"Downloading {len(todo)} model(s), about {total:.0f} GB in total.")
+    say(f"Downloading {len(todo)} model(s), about {total:.1f} GB in total.")
     run_worker("download", extra=[x for repo in todo for x in ("--repo", repo)])
     say("\nAll done.")
 
@@ -271,7 +271,7 @@ def cmd_app(quality=None) -> None:
     port = free_port()
     url = f"http://127.0.0.1:{port}"
     kwargs = {"device_map": device_arg, "dtype": dtype, "max_inference_batch_size": 1, "max_new_tokens": 2048}
-    cmd = [str(C.env_python()), "-m", "qwen_asr.cli.demo",
+    cmd = [str(C.env_python()), str(C.APP / WORKER), "app",
            "--asr-checkpoint", str(C.model_dir(asr)), "--aligner-checkpoint", str(C.model_dir(aligner)),
            "--backend", "transformers", "--backend-kwargs", json.dumps(kwargs),
            "--aligner-kwargs", json.dumps({"device_map": device_arg, "dtype": dtype}),
@@ -382,7 +382,11 @@ def run_menu() -> None:
         say("  4  Check my setup")
         say("  5  Download the models now (so nothing downloads later)")
         say("  0  Exit")
-        choice = ask("\nType a number and press Enter")
+        try:
+            choice = input("\nType a number and press Enter: ").strip()
+        except EOFError:  # input closed (Ctrl+D): leave instead of showing the menu forever
+            say("")
+            return
         actions = {"1": menu_transcribe, "2": menu_script, "3": cmd_app, "4": cmd_check,
                    "5": lambda: cmd_download("all")}
         if choice in ("0", "q", "exit", "quit"):
@@ -457,7 +461,7 @@ def main(argv=None) -> int:
         say(HELP)
         return 0
     try:
-        if argv[0] in SUBCOMMANDS and not Path(argv[0]).exists():
+        if argv[0] in SUBCOMMANDS and not Path(argv[0]).is_file():
             sub = argparse.ArgumentParser(prog="transcribe", add_help=False)
             sub.add_argument("command")
             sub.add_argument("what", nargs="?", default="all")

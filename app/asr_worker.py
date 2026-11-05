@@ -1,7 +1,7 @@
 """Transcribe model worker. Runs inside envs/asr, which has Qwen3-ASR installed.
 
 The launcher (transcribe.py) starts this file; you don't need to run it yourself.
-Commands: transcribe, download, probe.
+Commands: transcribe, download, probe, app.
 """
 
 from __future__ import annotations
@@ -173,7 +173,22 @@ def cmd_download(repos: list[str]) -> None:
         C.say(f"Downloaded: {repo.split('/')[-1]}")
 
 
+def cmd_app(demo_args: list[str]) -> None:
+    """Start the official Qwen web app (qwen-asr-demo) with these arguments.
+    Loading the Qwen package here first hides its harmless start-up notes
+    ("flash-attn is not installed", "SoX could not be found!"); the app itself is unchanged."""
+    W.import_quietly("qwen_asr")
+    with W.silenced():
+        from qwen_asr.cli import demo
+    code = demo.main(demo_args)
+    if code:
+        sys.exit(code)
+
+
 def main() -> None:
+    if sys.argv[1:2] == ["app"]:  # everything after "app" goes to the web app unchanged
+        W.run_main(lambda: cmd_app(sys.argv[2:]))
+        return
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("transcribe")

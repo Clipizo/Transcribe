@@ -189,3 +189,24 @@ class FileTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CommandTests(unittest.TestCase):
+    def test_commands_work_inside_the_kit_folder(self):
+        """'./transcribe app' starts the web app, even though the kit has a folder named app."""
+        import os
+        from unittest import mock
+
+        import transcribe as T
+
+        old = os.getcwd()
+        os.chdir(Path(__file__).resolve().parent.parent)
+        try:
+            self.assertTrue(Path("app").is_dir())
+            with mock.patch.object(T, "cmd_app") as app, mock.patch.object(T, "cmd_check") as check:
+                self.assertEqual(T.main(["app"]), 0)
+                self.assertEqual(T.main(["check"]), 0)
+            app.assert_called_once_with(None)
+            check.assert_called_once_with()
+        finally:
+            os.chdir(old)

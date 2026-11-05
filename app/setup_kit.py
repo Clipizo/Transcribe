@@ -339,18 +339,35 @@ def env_works(py: Path) -> bool:
         return False
 
 
+def remove_env(env_dir: Path) -> None:
+    try:
+        shutil.rmtree(env_dir)
+    except OSError as e:
+        raise InstallError(
+            f"I couldn't remove the old environment (envs/{env_dir.name}): {e}\n"
+            f"Close every {C.KIT_NAME} window (including the web app), then run the installer again.\n"
+            "If it still fails, restart the computer and try again.") from e
+
+
 def install_env(uv: str, index: str, repair: bool) -> None:
     env_dir = C.ENVS / ENV
     py = C.env_python(ENV)
     if repair and env_dir.exists():
         log("  Removing the old environment...")
-        shutil.rmtree(env_dir)
+        remove_env(env_dir)
     elif py.exists() and not env_works(py):
         log("  The environment is broken (was the folder moved?). Rebuilding it...")
-        shutil.rmtree(env_dir)
+        remove_env(env_dir)
+    elif py.exists():
+        current = installed_torch()
+        if current and not torch_matches(current, index):
+            # Start fresh, so no libraries of the old build stay behind (on Linux the NVIDIA
+            # libraries alone take about 4 GB). The other packages come back from the cache.
+            log(f"  Replacing PyTorch {current} with the {index} build, so rebuilding the environment.")
+            remove_env(env_dir)
     if not py.exists():
         if env_dir.exists():
-            shutil.rmtree(env_dir)
+            remove_env(env_dir)
         run([uv, "venv", str(env_dir), "--python", PYTHON_VERSION, "--quiet"], "Creating the environment")
     else:
         log("  The environment already exists; checking it.")
@@ -359,12 +376,7 @@ def install_env(uv: str, index: str, repair: bool) -> None:
     url = TORCH_INDEXES[index]
     if url:
         cmd += ["--index-url", url]
-    current = installed_torch()
-    if current and not torch_matches(current, index):
-        log(f"  Replacing PyTorch {current} with the {index} build.")
-        for p in TORCH_PACKAGES:
-            cmd += ["--reinstall-package", p]
-    if not torch_matches(current, index):
+    if not torch_matches(installed_torch(), index):
         log("  Downloading PyTorch. It is big (Mac: about 100 MB, NVIDIA: about 3 GB), so this can take a while.")
     run(cmd, "Installing PyTorch")
     run([uv, "pip", "install", "--python", str(py), "--no-deps", "-r", str(C.APP / "requirements" / REQUIREMENTS)],
