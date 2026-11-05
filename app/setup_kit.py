@@ -102,7 +102,7 @@ def ask_yes_no(question: str, default: bool, assume_yes: bool) -> bool:
     hint = "Y/n" if default else "y/N"
     while True:
         try:
-            a = input(f"{question} ({hint}): ").strip().lower()
+            a = input(f"{question} ({hint}): ").replace("\ufeff", "").strip().lower()
         except EOFError:
             return default
         if not a:
@@ -113,12 +113,28 @@ def ask_yes_no(question: str, default: bool, assume_yes: bool) -> bool:
             return False
 
 
+# Patient downloads: home internet connections and big files (PyTorch is about 3 GB) need it.
+UV_NETWORK = {"UV_HTTP_TIMEOUT": "300", "UV_HTTP_CONNECT_TIMEOUT": "60", "UV_HTTP_RETRIES": "8"}
+ATTEMPTS = 3
+
+
 def run(cmd: list[str], what: str) -> None:
-    log("  > " + " ".join(f'"{c}"' if " " in c else c for c in cmd))
-    code = subprocess.call(cmd, cwd=str(C.KIT))
-    log(f"  (exit code {code})")
-    if code != 0:
-        raise InstallError(f"{what} failed.")
+    """Run an install command. Downloads that fail (usually an internet hiccup) are tried again."""
+    for attempt in range(1, ATTEMPTS + 1):
+        log("  > " + " ".join(f'"{c}"' if " " in c else c for c in cmd))
+        code = subprocess.call(cmd, cwd=str(C.KIT))
+        log(f"  (exit code {code})")
+        if code == 0:
+            return
+        if attempt < ATTEMPTS:
+            log("  That didn't work, usually because of a short internet problem. Trying again in 15 seconds")
+            log(f"  (attempt {attempt + 1} of {ATTEMPTS}). What is already downloaded is kept.")
+            time.sleep(15)
+    raise InstallError(
+        f"{what} failed, {ATTEMPTS} times.\n"
+        "This is usually an internet problem: the connection dropped, or a school, work or\n"
+        "country network blocks the download. Check your connection, then run the installer\n"
+        "again: it keeps what it already downloaded and continues.")
 
 
 # ---------------------------------------------------------------------------
@@ -277,8 +293,40 @@ def windows_runtime_missing() -> list[str]:
 
 
 def is_windows_dll_error(text: str) -> bool:
-    return C.IS_WINDOWS and any(k in text for k in ("WinError 126", "DLL load failed", "c10.dll",
-                                                    "vc_redist", "Visual C++"))
+    return C.IS_WINDOWS and any(k in text for k in ("WinError 126", "WinError 127", "DLL load failed",
+                                                    "c10.dll", "vc_redist", "Visual C++"))
+
+
+def install_windows_runtime(assume_yes: bool) -> bool:
+    """Download Microsoft's Visual C++ Redistributable and install it (Windows asks the user for
+    permission). Returns False if it wasn't installed; the caller then explains the manual fix."""
+    log("  PyTorch needs a free Microsoft component, the 'Microsoft Visual C++ Redistributable'.")
+    if not ask_yes_no("  Install it now? (Windows will ask for permission: click Yes)", default=True,
+                      assume_yes=assume_yes):
+        return False
+    try:
+        import urllib.request
+
+        exe = C.TOOLS / "vc_redist.x64.exe"
+        exe.parent.mkdir(parents=True, exist_ok=True)
+        log("  Downloading it from Microsoft (about 25 MB)...")
+        with urllib.request.urlopen(VC_REDIST_URL, timeout=120) as response, exe.open("wb") as f:
+            shutil.copyfileobj(response, f)
+        log("  Installing it. When Windows asks for permission, click Yes.")
+        powershell = Path(os.environ.get("SystemRoot", r"C:\Windows")) / "System32" / "WindowsPowerShell" / "v1.0" / "powershell.exe"
+        script = ("$p = Start-Process -FilePath $env:KIT_VC_REDIST -ArgumentList '/install','/passive','/norestart' "
+                  "-Verb RunAs -Wait -PassThru; exit $p.ExitCode")
+        code = subprocess.call([str(powershell) if powershell.exists() else "powershell", "-NoProfile",
+                                "-ExecutionPolicy", "Bypass", "-Command", script],
+                               env=dict(os.environ, KIT_VC_REDIST=str(exe)))
+        log(f"  (exit code {code})")
+    except Exception as e:  # no internet, permission refused...: fall back to the manual fix
+        log(f"  It couldn't be installed automatically ({type(e).__name__}: {e}).")
+        return False
+    if code not in (0, 1638, 3010) or windows_runtime_missing():  # 1638: a newer one is installed
+        return False
+    log("  OK: the Microsoft component is installed.")
+    return True
 
 
 # ---------------------------------------------------------------------------
@@ -427,7 +475,7 @@ def describe(info: dict) -> None:
     gpu = info.get("nvidia")
     if gpu:
         cc = f", compute {gpu['cc']}" if gpu.get("cc") else ""
-        log(f"  Graphics:   NVIDIA {gpu['name']} ({gpu.get('vram_gb')} GB, driver {gpu.get('driver')}{cc})")
+        log(f"  Graphics:   {C.gpu_label(gpu['name'])} ({gpu.get('vram_gb')} GB, driver {gpu.get('driver')}{cc})")
     elif info["apple_silicon"]:
         log("  Graphics:   Apple Silicon (M-series)")
     else:
@@ -445,6 +493,8 @@ def main() -> int:
     parser.add_argument("--torch", choices=list(TORCH_INDEXES), help="force a PyTorch build")
     parser.add_argument("--repair", action="store_true", help="rebuild the environment from scratch")
     args = parser.parse_args()
+    for name, value in UV_NETWORK.items():
+        os.environ.setdefault(name, value)
 
     try:
         LOG_FILE.write_text(f"{C.KIT_NAME} {C.KIT_VERSION} install log, {time.strftime('%Y-%m-%d %H:%M:%S')}\n",
@@ -456,9 +506,8 @@ def main() -> int:
     log("=" * 60)
     log(f"  {C.KIT_NAME} {C.KIT_VERSION} installer")
     log("=" * 60)
-    log(f"This sets up everything {C.KIT_NAME} needs inside this folder. Nothing")
-    log("else on your computer is changed. It takes 5 to 30 minutes, depending")
-    log("on your internet connection.")
+    log(f"This sets up everything {C.KIT_NAME} needs inside this folder. It takes")
+    log("5 to 30 minutes, depending on your internet connection.")
     total = 4
     try:
         step(1, total, "Checking your computer")
@@ -466,11 +515,14 @@ def main() -> int:
         describe(info)
         check_supported(info)
         check_folder(args.yes)
+        runtime_tried = False
         if windows_runtime_missing():
-            log("WARNING: " + VC_REDIST_HELP)
+            runtime_tried = True
+            if not install_windows_runtime(args.yes):
+                log("WARNING: " + VC_REDIST_HELP)
         free = info.get("disk_free_gb")
         if free is not None and free < 12:
-            log(f"WARNING: only {free:.0f} GB free. {C.KIT_NAME} needs about 6 GB for the programs and")
+            log(f"WARNING: only {free:.0f} GB free. {C.KIT_NAME} needs about 8 GB for the programs and")
             log("         2 to 5 GB for each AI model.")
             if not ask_yes_no("Continue anyway?", default=free >= 8, assume_yes=args.yes):
                 raise InstallError("Install stopped. Free up disk space and run the installer again.")
@@ -502,10 +554,17 @@ def main() -> int:
             p = probe()
         if not p.get("package_ok"):
             problem = p.get("package_error") or p.get("torch_error") or p.get("error") or ""
+            if is_windows_dll_error(problem) and not runtime_tried:
+                # The component is there but too old or damaged: installing it again fixes that.
+                runtime_tried = True
+                if install_windows_runtime(args.yes):
+                    p = probe()
+                    problem = p.get("package_error") or p.get("torch_error") or p.get("error") or ""
+        if not p.get("package_ok"):
             if is_windows_dll_error(problem):
                 raise InstallError(VC_REDIST_HELP)
             raise InstallError(f"The installation doesn't load:\n  {problem}")
-        where = ("NVIDIA " + str(p.get("gpu"))) if p.get("cuda_ok") else ("Apple Silicon" if p.get("mps") else "processor")
+        where = C.gpu_label(p.get("gpu")) if p.get("cuda_ok") else ("Apple Silicon" if p.get("mps") else "processor")
         log(f"  OK: Python {p.get('python')}, PyTorch {p.get('torch')}, runs on {where}")
         if not p.get("ffmpeg"):
             raise InstallError("The audio converter (ffmpeg) didn't install.")

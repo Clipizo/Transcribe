@@ -55,7 +55,7 @@ The terminal must be **in the Transcribe folder** (section 4 explains how). File
 
 | Question | How to check | What it means |
 |---|---|---|
-| Enough disk space? | Windows: File Explorer > **This PC** shows the free space on `C:`. Mac: Apple menu > **System Settings** > **General** > **Storage**. | About **15 GB free** (about 7 GB for the programs, 4 to 7 GB for the models). |
+| Enough disk space? | Windows: File Explorer > **This PC** shows the free space on `C:`. Mac: Apple menu > **System Settings** > **General** > **Storage**. | About **15 GB free** (about 8 GB for the programs, 4 to 7 GB for the models). |
 | Which system? | | Windows 10 or 11 (64-bit), a Mac with Apple Silicon, or Linux. |
 | Mac: Apple Silicon or Intel? | Apple menu > **About This Mac**. "Chip: Apple M1" (M2, M3, M4...) is Apple Silicon. "Processor: Intel" is Intel. | **Intel Macs can't run Transcribe** (current PyTorch doesn't support them). |
 | Windows: NVIDIA graphics card? | Press Ctrl+Shift+Esc (Task Manager) > **Performance**. A "GPU" entry named "NVIDIA ..." means yes; it also shows the "Dedicated GPU memory". | With NVIDIA: fast. Without: Transcribe still works, on the processor, but long recordings take a while. |
@@ -65,30 +65,34 @@ The terminal must be **in the Transcribe folder** (section 4 explains how). File
 
 Each command goes into **PowerShell** (press the Windows key, type `PowerShell`, press Enter). Give the user one command at a time; they paste it, press Enter, and wait until it finishes.
 
+Many of these commands print nothing when they work; the next line starting with `PS` means it's ready for the next one. To paste in PowerShell: right-click, or Ctrl+V.
+
 1. Download Transcribe:
    ```powershell
-   Invoke-WebRequest "https://github.com/Clipizo/Transcribe/archive/refs/heads/main.zip" -OutFile "$env:TEMP\Transcribe.zip"
+   Invoke-WebRequest "https://github.com/Clipizo/Transcribe/archive/refs/heads/main.zip" -OutFile "$env:TEMP\Transcribe.zip" -UseBasicParsing
    ```
-2. Unpack it to `C:\Transcribe` (two commands):
+2. Unzip it:
    ```powershell
-   Expand-Archive "$env:TEMP\Transcribe.zip" -DestinationPath "C:\"
+   Expand-Archive "$env:TEMP\Transcribe.zip" -DestinationPath "C:\" -Force
    ```
+3. Rename the folder to `C:\Transcribe`:
    ```powershell
    Rename-Item "C:\Transcribe-main" "Transcribe"
    ```
-3. Go into the folder:
+4. Go into the folder:
    ```powershell
    cd C:\Transcribe
    ```
-4. Install:
+5. Install:
    ```powershell
    ./install-windows.bat
    ```
    - It shows the progress in 4 steps. The PyTorch download (about 3 GB with an NVIDIA card) can take 5 to 20 minutes and may look stuck; it isn't.
    - **Don't click inside the window:** that pauses it (the title then starts with "Select"). If that happens, press Esc.
+   - If Windows lacks a Microsoft component PyTorch needs, the installer offers to install it: press Enter, then click **Yes** when Windows asks for permission.
    - At the end it offers to download the models now: press Enter for yes.
    - **Done** when it says **Transcribe is installed!**, followed by "Press any key to continue": press a key.
-5. Start Transcribe:
+6. Start Transcribe:
    ```powershell
    ./transcribe
    ```
@@ -98,8 +102,9 @@ Each command goes into **PowerShell** (press the Windows key, type `PowerShell`,
 **Where the folder goes:** `C:\Transcribe` is ideal. Avoid long paths, OneDrive folders and the Desktop: the AI models are large and long paths can break the install.
 
 **If a command fails:**
-- `Expand-Archive` or `Rename-Item` says the folder already exists: Transcribe was downloaded before. Use the existing `C:\Transcribe` (run the installer again in it), or, if the user wants a fresh copy, rename the old folder first.
+- `Rename-Item` says the file already exists: Transcribe was downloaded before. Use the existing `C:\Transcribe` (run the installer again in it), or, for a fresh copy, keep the old folder under another name with `Rename-Item "C:\Transcribe" "Transcribe-old"` and run step 3 again.
 - `Invoke-WebRequest` fails with an SSL/TLS error (older Windows 10): use the "Without commands" way above.
+- The installer stops with an error: it explains the problem in plain words. Running it again is safe and continues where it stopped (downloads that dropped are retried automatically first).
 
 ### Mac (Apple Silicon)
 
@@ -113,41 +118,34 @@ Each command goes into **Terminal** (press Cmd+Space, type `Terminal`, press Ent
    ```bash
    curl -L -o Transcribe.zip https://github.com/Clipizo/Transcribe/archive/refs/heads/main.zip
    ```
-3. Unpack it to `~/Transcribe`:
+3. Unzip it:
    ```bash
-   unzip -q Transcribe.zip && mv Transcribe-main Transcribe && rm Transcribe.zip
+   unzip -oq Transcribe.zip
    ```
-4. Go into the folder:
+4. Rename the folder to `Transcribe`:
+   ```bash
+   mv Transcribe-main Transcribe
+   ```
+5. Go into the folder:
    ```bash
    cd ~/Transcribe
    ```
-5. Install. It shows the progress in 4 steps and takes about 5 to 15 minutes. At the end, press Enter to download the models. Done when it says **Transcribe is installed!**
+6. Install. It shows the progress in 4 steps and takes about 5 to 15 minutes. At the end, press Enter to download the models. Done when it says **Transcribe is installed!**
    ```bash
    bash install.sh
    ```
-6. Start Transcribe:
+7. Start Transcribe:
    ```bash
    ./transcribe
    ```
 
-If `mv` says `Transcribe` already exists, Transcribe was downloaded before: use the existing `~/Transcribe` folder.
+If `~/Transcribe` already exists (Transcribe was downloaded before), `mv` would put the new folder inside it. Either use the existing `~/Transcribe` folder (run the installer again in it), or, for a fresh copy, first run `mv ~/Transcribe ~/Transcribe-old`, then step 4.
 
 ### Linux
 
-```bash
-git clone https://github.com/Clipizo/Transcribe.git ~/Transcribe
-```
-```bash
-cd ~/Transcribe
-```
-```bash
-bash install.sh
-```
-```bash
-./transcribe
-```
+The same commands as on a Mac, in a terminal. If `curl` isn't installed, download with `wget -O Transcribe.zip https://github.com/Clipizo/Transcribe/archive/refs/heads/main.zip` instead. With `git`, `git clone https://github.com/Clipizo/Transcribe.git ~/Transcribe` replaces the download, unzip and rename steps.
 
-For NVIDIA graphics, the NVIDIA driver must be installed (`nvidia-smi` should work). Without `git`, use the Mac commands (`curl` and `unzip`).
+For NVIDIA graphics, the NVIDIA driver must be installed (`nvidia-smi` should work).
 
 ### Starting it next time
 
@@ -271,7 +269,8 @@ This is the official Qwen demo app, with timestamps. The browser opens by itself
 | The installer window closes immediately, or Windows opens the file in Notepad | Make sure the ZIP was extracted (section 2) and double-click `install-windows.bat` itself. |
 | "It looks like you started the installer from inside the ZIP file" | Extract the ZIP first, move the folder to `C:\Transcribe`, and run the installer from there. |
 | "Could not download uv" | No internet, or the network blocks `astral.sh` or `github.com` (some school and office networks). Try another network. |
-| Windows: the installer says a Microsoft component is missing, or an error mentions `c10.dll`, `WinError 126` or "DLL load failed" | Install Microsoft's free Visual C++ Redistributable from `https://aka.ms/vs/17/release/vc_redist.x64.exe`, restart the computer, and run the installer again. |
+| Windows: the installer says a Microsoft component is missing, or an error mentions `c10.dll`, `WinError 126` or "DLL load failed" | The installer offers to install it (Microsoft's free Visual C++ Redistributable): press Enter, then click **Yes** when Windows asks for permission. If that fails, download it from `https://aka.ms/vs/17/release/vc_redist.x64.exe`, run it, restart the computer, and run the installer again. |
+| "Installing PyTorch failed, 3 times" or another download error during the install | An internet problem. Check the connection and run the installer again: it keeps what it downloaded. On school, work or some country networks, `download.pytorch.org` or `pypi.org` may be blocked: try another network. |
 | The install looks stuck | The PyTorch download is large; wait. On Windows, if the window title starts with "Select", press Esc (clicking the window pauses it). |
 | A warning about a long path, OneDrive, iCloud or special characters | Move the folder to `C:\Transcribe` (Windows) or the home folder (Mac), then run the installer again with `--repair`. |
 | "Transcribe isn't installed yet" | Run the installer (section 2). If it ran, look at the end of its window or `install-log.txt` for the error. |
@@ -322,7 +321,7 @@ Transcribe needs one speech-to-text model (the size from `envs/settings.json`) p
 
 - `--quality best` or `--quality fast` overrides the default for one command. Best is more accurate, especially with noise, accents and difficult words.
 - **Change the default:** edit `asr_size` in `envs/settings.json` (`"0.6B"` or `"1.7B"`).
-- **Uninstall:** delete the Transcribe folder. Nothing else was installed.
+- **Uninstall:** delete the Transcribe folder. Nothing else was installed, except Microsoft's Visual C++ Redistributable on a Windows PC that lacked it (other programs use it too; leave it).
 - **Update:** download the new version, extract it, copy the old `models` and `output` folders into it (so the models don't download again), and run the installer.
 - **Move:** move the whole folder, then run the installer again.
 

@@ -15,7 +15,7 @@ Transcribe is a beginner-friendly kit for **Qwen3-ASR**, the free, open speech-r
 
 ## What you need
 
-- **Free disk space: about 15 GB.** The programs take about 7 GB (less without an NVIDIA graphics card). The AI models take about 4 to 7 GB and download by themselves the first time you use Transcribe (see [The AI models](#the-ai-models)).
+- **Free disk space: about 15 GB.** The programs take about 8 GB (less without an NVIDIA graphics card). The AI models take about 4 to 7 GB and download by themselves the first time you use Transcribe (see [The AI models](#the-ai-models)).
 - **A computer:** a Windows 10 or 11 PC, a Mac with Apple Silicon (M1 or newer), or a Linux PC. Intel Macs and Windows on ARM aren't supported.
 - **A graphics card (optional):** with an NVIDIA graphics card (6 GB or more; 8 GB or more for best quality) or on a Mac it's quick. Without either, it runs on the processor: it works, but long recordings take a while.
 - **An internet connection** for the install (about 3 GB with an NVIDIA card, less without) and the first download of the models.
@@ -33,89 +33,108 @@ Read its file "Transcribe AI Guide.md" first, then guide me one step at a time.
 
 If your AI can't open links, download [`Transcribe AI Guide.md`](Transcribe%20AI%20Guide.md) and attach it to the chat instead.
 
-Using an AI agent that can run commands (Claude Code, OpenAI Codex, Gemini CLI, Cursor, VS Code with Copilot)? Open the Transcribe folder in it and ask, for example, *"install Transcribe and make subtitles for my-video.mp4"*. The agent follows `AGENTS.md` and `SKILL.md`.
+Using an AI agent that can run commands (Claude Code, OpenAI Codex, Gemini CLI, Cursor, VS Code with Copilot)? Ask it, for example, *"Download https://github.com/Clipizo/Transcribe to C:\Transcribe, install it by following its SKILL.md, then make subtitles for my-video.mp4"* (on a Mac or Linux, say `~/Transcribe`). If you already have the Transcribe folder, open it in the agent instead. The agent follows `AGENTS.md` and `SKILL.md`.
 
 ### Install it yourself
 
-Copy each command into the window, press Enter, and wait until it finishes before the next one. The whole install takes 5 to 30 minutes, depending on your internet connection.
+You don't need Python or anything else first: the installer gets everything Transcribe needs and puts it in the Transcribe folder. It takes 5 to 30 minutes, depending on your internet connection.
+
+**How it works:** copy a command, paste it into the window, and press Enter. Wait until the window is ready for the next one (Windows: a new line starting with `PS`; Mac and Linux: a new line ending with `%` or `$`). Many commands print nothing when they work, and that's normal.
 
 #### Windows 10 or 11
 
-1. Open **PowerShell**: press the Windows key, type `PowerShell`, and press Enter.
-2. Download Transcribe:
-   ```powershell
-   Invoke-WebRequest "https://github.com/Clipizo/Transcribe/archive/refs/heads/main.zip" -OutFile "$env:TEMP\Transcribe.zip"
-   ```
-3. Unpack it to `C:\Transcribe`:
-   ```powershell
-   Expand-Archive "$env:TEMP\Transcribe.zip" -DestinationPath "C:\"
-   ```
-   ```powershell
-   Rename-Item "C:\Transcribe-main" "Transcribe"
-   ```
-4. Go into the folder:
-   ```powershell
-   cd C:\Transcribe
-   ```
-5. Install. It shows its progress in 4 steps and ends with **Transcribe is installed!** When it asks whether to download the models now, press Enter for yes.
-   ```powershell
-   ./install-windows.bat
-   ```
-6. Start Transcribe:
-   ```powershell
-   ./transcribe
-   ```
+**Step 1. Open PowerShell.** Press the Windows key, type `PowerShell`, and press Enter. To paste in it, right-click or press Ctrl+V.
+
+**Step 2. Download Transcribe**
+```powershell
+Invoke-WebRequest "https://github.com/Clipizo/Transcribe/archive/refs/heads/main.zip" -OutFile "$env:TEMP\Transcribe.zip" -UseBasicParsing
+```
+
+**Step 3. Unzip it**
+```powershell
+Expand-Archive "$env:TEMP\Transcribe.zip" -DestinationPath "C:\" -Force
+```
+
+**Step 4. Rename the folder to `C:\Transcribe`**
+```powershell
+Rename-Item "C:\Transcribe-main" "Transcribe"
+```
+
+**Step 5. Go into the folder**
+```powershell
+cd C:\Transcribe
+```
+
+**Step 6. Install Transcribe**
+```powershell
+./install-windows.bat
+```
+It works through 4 steps. Downloading PyTorch (about 3 GB with an NVIDIA graphics card) can take a while and may look stuck, but it isn't. Don't click inside the window, because that pauses it (if the window's title starts with *Select*, press Esc). When it asks *"Download the AI models now?"*, press Enter (another 4 to 7 GB, so this can also take a while). It's done when it says **Transcribe is installed!**, then *"Press any key to continue"*: press a key.
+
+**Step 7. Start Transcribe**
+```powershell
+./transcribe
+```
+The menu opens. Type `1`, press Enter, and drag a video or audio file into the window.
+
+**If a step shows red text:**
+- **Step 2:** check your internet connection and paste the command again.
+- **Step 4** says the file *already exists*: you already have a `C:\Transcribe` folder. Keep it under another name with the command below, then do step 4 again.
+  ```powershell
+  Rename-Item "C:\Transcribe" "Transcribe-old"
+  ```
+- **Step 6:** the installer explains the problem in plain words. Paste the command again: it continues where it stopped. Still stuck? Give the text in the window, or the file `install-log.txt` in `C:\Transcribe`, to your AI assistant.
 
 Prefer clicking? Click the green **Code** button on this page > **Download ZIP**. Right-click the ZIP > **Extract All...**, extract it to `C:\` and rename the folder to `C:\Transcribe`. Then double-click `install-windows.bat` to install, and `transcribe.bat` to start. If Windows says *"Windows protected your PC"*, click **More info** > **Run anyway**.
 
 #### Mac (Apple Silicon)
 
-1. Open **Terminal**: press Cmd+Space, type `Terminal`, and press Enter.
-2. Go to your home folder:
-   ```bash
-   cd ~
-   ```
-3. Download Transcribe:
-   ```bash
-   curl -L -o Transcribe.zip https://github.com/Clipizo/Transcribe/archive/refs/heads/main.zip
-   ```
-4. Unpack it to `Transcribe` in your home folder:
-   ```bash
-   unzip -q Transcribe.zip && mv Transcribe-main Transcribe && rm Transcribe.zip
-   ```
-5. Go into the folder:
-   ```bash
-   cd ~/Transcribe
-   ```
-6. Install. It shows its progress in 4 steps and ends with **Transcribe is installed!** When it asks whether to download the models now, press Enter for yes.
-   ```bash
-   bash install.sh
-   ```
-7. Start Transcribe:
-   ```bash
-   ./transcribe
-   ```
+**Step 1. Open Terminal.** Press Cmd+Space, type `Terminal`, and press Enter.
+
+**Step 2. Go to your home folder**
+```bash
+cd ~
+```
+
+**Step 3. Download Transcribe**
+```bash
+curl -L -o Transcribe.zip https://github.com/Clipizo/Transcribe/archive/refs/heads/main.zip
+```
+
+**Step 4. Unzip it**
+```bash
+unzip -oq Transcribe.zip
+```
+
+**Step 5. Rename the folder to `Transcribe`**
+```bash
+mv Transcribe-main Transcribe
+```
+
+**Step 6. Go into the folder**
+```bash
+cd ~/Transcribe
+```
+
+**Step 7. Install Transcribe** (it works through 4 steps; when it asks *"Download the AI models now?"*, press Enter; it's done when it says **Transcribe is installed!**)
+```bash
+bash install.sh
+```
+
+**Step 8. Start Transcribe**
+```bash
+./transcribe
+```
+
+Installed Transcribe before? Then before step 5, keep the old folder under another name with `mv ~/Transcribe ~/Transcribe-old`.
 
 #### Linux
 
-1. Download Transcribe into your home folder:
-   ```bash
-   git clone https://github.com/Clipizo/Transcribe.git ~/Transcribe
-   ```
-2. Go into the folder:
-   ```bash
-   cd ~/Transcribe
-   ```
-3. Install:
-   ```bash
-   bash install.sh
-   ```
-4. Start Transcribe:
-   ```bash
-   ./transcribe
-   ```
-
-No `git`? Use the Mac commands (with `curl` and `unzip`) instead.
+The same steps as on a Mac, in a terminal. If step 3 says `curl: command not found`, use this instead:
+```bash
+wget -O Transcribe.zip https://github.com/Clipizo/Transcribe/archive/refs/heads/main.zip
+```
+For an NVIDIA graphics card, the NVIDIA driver must be installed (the command `nvidia-smi` should work).
 
 **To start it again later:**
 
@@ -199,7 +218,7 @@ Transcribe picks the best settings for your computer automatically. `--quality f
 | `output/` | Your transcripts and subtitles. |
 | `envs/`, `models/`, `.tools/` | Created by the installer: Python, the AI libraries and the downloaded models. |
 
-**To uninstall,** delete the Transcribe folder. Nothing else is installed on your computer.
+**To uninstall,** delete the Transcribe folder. Nothing else is installed on your computer, except Microsoft's free Visual C++ component on a Windows PC that didn't have it yet (the installer asks first; other programs use it too, so leave it).
 
 ## Respect people's privacy
 

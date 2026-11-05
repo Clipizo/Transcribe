@@ -209,9 +209,9 @@ def cmd_check() -> None:
         ok = False
     else:
         if info.get("cuda") and info.get("cuda_ok", True):
-            where = f"NVIDIA {info.get('gpu')} ({info.get('vram_gb')} GB) - fast"
+            where = f"{C.gpu_label(info.get('gpu'))} ({info.get('vram_gb')} GB) - fast"
         elif info.get("cuda"):
-            where = f"NVIDIA {info.get('gpu')} found, but it can't run this PyTorch build: {info.get('cuda_error', '')[:80]}"
+            where = f"{C.gpu_label(info.get('gpu'))} found, but it can't run this PyTorch build: {info.get('cuda_error', '')[:80]}"
             ok = False
         elif info.get("mps"):
             where = "Apple Silicon graphics"
@@ -300,7 +300,8 @@ def cmd_app(quality=None) -> None:
 def ask(prompt: str, default: str = "") -> str:
     suffix = f" [{default}]" if default else ""
     try:
-        answer = input(f"{prompt}{suffix}: ").strip()
+        # Text piped from Windows PowerShell can start with an invisible byte-order mark.
+        answer = input(f"{prompt}{suffix}: ").replace("\ufeff", "").strip()
     except EOFError:
         answer = ""
     return answer or default
@@ -383,7 +384,7 @@ def run_menu() -> None:
         say("  5  Download the models now (so nothing downloads later)")
         say("  0  Exit")
         try:
-            choice = input("\nType a number and press Enter: ").strip()
+            choice = input("\nType a number and press Enter: ").replace("\ufeff", "").strip()
         except EOFError:  # input closed (Ctrl+D): leave instead of showing the menu forever
             say("")
             return

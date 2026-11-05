@@ -11,6 +11,8 @@ echo Transcribe isn't installed yet. Double-click install-windows.bat first.
 if "%~1"=="" pause
 exit /b 1
 :run
+set "PYTHONHOME="
+set "PYTHONPATH="
 set "PYTHONUTF8=1"
 "%PY%" "%KIT%app\transcribe.py" %*
 set "CODE=%ERRORLEVEL%"

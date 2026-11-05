@@ -10,6 +10,9 @@
 set -u
 KIT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$KIT" || exit 1
+# Ignore Python settings that other programs may have left on this computer.
+unset PYTHONHOME PYTHONPATH
+UV_VERSION="0.13.7"   # the uv version this kit was tested with
 
 UV_DIR="$KIT/.tools/uv"
 UV="$UV_DIR/uv"
@@ -18,9 +21,9 @@ UV="$UV_DIR/uv"
 if [ ! -x "$UV" ]; then
   echo "Downloading uv (a small tool that installs Python for Transcribe)..."
   if command -v curl >/dev/null 2>&1; then
-    curl -LsSf https://astral.sh/uv/install.sh | env UV_UNMANAGED_INSTALL="$UV_DIR" sh
+    curl -LsSf "https://astral.sh/uv/$UV_VERSION/install.sh" | env UV_UNMANAGED_INSTALL="$UV_DIR" sh
   elif command -v wget >/dev/null 2>&1; then
-    wget -qO- https://astral.sh/uv/install.sh | env UV_UNMANAGED_INSTALL="$UV_DIR" sh
+    wget -qO- "https://astral.sh/uv/$UV_VERSION/install.sh" | env UV_UNMANAGED_INSTALL="$UV_DIR" sh
   fi
   UV="$UV_DIR/uv"
   [ -x "$UV" ] || UV="$UV_DIR/bin/uv"
@@ -40,5 +43,6 @@ export UV_PYTHON_INSTALL_DIR="$KIT/.tools/python"
 export UV_CACHE_DIR="$KIT/.tools/uv-cache"
 export UV_PYTHON_PREFERENCE="${UV_PYTHON_PREFERENCE:-only-managed}"
 export UV_NO_CONFIG=1
+export UV_HTTP_TIMEOUT=300 UV_HTTP_CONNECT_TIMEOUT=60 UV_HTTP_RETRIES=8
 chmod +x "$KIT/transcribe.sh" 2>/dev/null || true
 "$UV" run --no-project --python 3.12 "$KIT/app/setup_kit.py" "$@"

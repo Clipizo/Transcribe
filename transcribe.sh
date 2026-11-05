@@ -8,5 +8,6 @@ if [ ! -x "$PY" ]; then
   echo "Transcribe isn't installed yet. In this folder, run:  bash install.sh"
   exit 1
 fi
+unset PYTHONHOME PYTHONPATH
 export PYTHONUTF8=1
 exec "$PY" "$KIT/app/transcribe.py" "$@"

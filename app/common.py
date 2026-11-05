@@ -42,6 +42,12 @@ def env_python(name: str = ENV_NAME) -> Path:
     return ENVS / name / "bin" / "python"
 
 
+def gpu_label(name) -> str:
+    """'GeForce RTX 3060' -> 'NVIDIA GeForce RTX 3060' (without saying NVIDIA twice)."""
+    name = str(name or "graphics card").strip()
+    return name if name.lower().startswith("nvidia") else f"NVIDIA {name}"
+
+
 def launcher_command() -> str:
     """How the user starts Transcribe from a terminal on this computer."""
     # PowerShell on Windows accepts ./transcribe (it runs transcribe.bat); on Mac and Linux the
@@ -203,6 +209,8 @@ def say(text: str = "") -> None:
 def child_env() -> dict:
     """Environment variables for the model process."""
     env = os.environ.copy()
+    for name in ("PYTHONHOME", "PYTHONPATH"):  # set by some other programs; they'd break the environment
+        env.pop(name, None)
     env.update({
         "PYTHONUTF8": "1",
         "PYTHONIOENCODING": "utf-8",
@@ -210,6 +218,9 @@ def child_env() -> dict:
         "HF_HOME": str(TOOLS / "hf-home"),
         "HF_HUB_DISABLE_SYMLINKS_WARNING": "1",
         "HF_HUB_DISABLE_TELEMETRY": "1",
+        # Hide Hugging Face's technical notes (retries, "install hf_xet with pip"): they look like
+        # errors to beginners. Real errors still show, and ensure_model explains them.
+        "HF_HUB_VERBOSITY": "error",
         "HF_XET_CHUNK_CACHE_SIZE_BYTES": "0",
         "TOKENIZERS_PARALLELISM": "false",
         "TRANSFORMERS_VERBOSITY": "error",
@@ -230,7 +241,7 @@ class UserError(Exception):
 
 def clean_path_input(text: str) -> str:
     """Turn what a terminal pastes when you drag a file into it into a path."""
-    s = text.strip()
+    s = text.replace("\ufeff", "").strip()
     if s.startswith("& "):  # PowerShell sometimes adds "& '...'"
         s = s[2:].strip()
     quoted = len(s) >= 2 and s[0] == s[-1] and s[0] in "\"'"
@@ -306,7 +317,7 @@ _ABBREVIATIONS = {
 
 def clean_script(text: str) -> str:
     """Remove Markdown marks from a script (headings, bullets, bold...)."""
-    text = text.replace("﻿", "").replace("\r\n", "\n").replace("\r", "\n").replace("\t", " ")
+    text = text.replace("\ufeff", "").replace("\r\n", "\n").replace("\r", "\n").replace("\t", " ")
     lines = []
     for line in text.split("\n"):
         s = line.strip()

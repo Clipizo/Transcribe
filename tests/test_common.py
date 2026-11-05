@@ -187,11 +187,25 @@ class FileTests(unittest.TestCase):
             self.assertEqual(C.read_text_file(p), "Café")
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class CommandTests(unittest.TestCase):
+    def test_gpu_name_says_nvidia_once(self):
+        self.assertEqual(C.gpu_label("NVIDIA GeForce RTX 4070 Ti"), "NVIDIA GeForce RTX 4070 Ti")
+        self.assertEqual(C.gpu_label("GeForce GTX 1060"), "NVIDIA GeForce GTX 1060")
+        self.assertEqual(C.gpu_label(None), "NVIDIA graphics card")
+
+    def test_piped_answers_with_a_byte_order_mark(self):
+        """Windows PowerShell starts piped text with an invisible byte-order mark."""
+        self.assertEqual(C.clean_path_input('\ufeff"C:\\Videos\\my clip.mp4"'), "C:\\Videos\\my clip.mp4")
+        self.assertEqual(C.clean_script("\ufeffHello there."), "Hello there.")
+
+    def test_model_process_ignores_python_settings_of_other_programs(self):
+        from unittest import mock
+
+        with mock.patch.dict("os.environ", {"PYTHONHOME": r"C:\Other\Python", "PYTHONPATH": r"C:\Other\lib"}):
+            env = C.child_env()
+        self.assertNotIn("PYTHONHOME", env)
+        self.assertNotIn("PYTHONPATH", env)
+
     def test_commands_work_inside_the_kit_folder(self):
         """'./transcribe app' starts the web app, even though the kit has a folder named app."""
         import os
@@ -210,3 +224,7 @@ class CommandTests(unittest.TestCase):
             check.assert_called_once_with()
         finally:
             os.chdir(old)
+
+
+if __name__ == "__main__":
+    unittest.main()
