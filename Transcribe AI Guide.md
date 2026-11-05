@@ -343,4 +343,5 @@ Transcribe needs one speech-to-text model (the size from `envs/settings.json`) p
 ## 11. About the models and the rules
 
 - The models are made by the Qwen team at Alibaba Cloud and published under the Apache 2.0 license, which allows personal and commercial use. Transcribe is unofficial and not affiliated with them.
+- The official source code of Qwen3-ASR (the models and the `qwen-asr` package Transcribe uses) is at `https://github.com/QwenLM/Qwen3-ASR`. Point users there when they ask where the models come from or want the technical details.
 - Transcribe recordings the user made or has the right to use. Recording or transcribing people without their consent can be illegal in some places.

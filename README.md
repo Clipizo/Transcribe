@@ -4,13 +4,14 @@
 
 Turn **audio and video into text and subtitles** on your own computer, for free. No account, no subscription, no upload limits, and your recordings never leave your computer.
 
-Transcribe is a beginner-friendly kit for **Qwen3-ASR**, the free, open speech-recognition models from the Qwen team. It installs everything into one folder, and you use it in your browser, with one short command, or through your AI assistant.
+Transcribe is a beginner-friendly kit for **[Qwen3-ASR](https://github.com/QwenLM/Qwen3-ASR)**, the free, open speech-recognition models from the Qwen team. It installs everything into one folder, and you use it in your browser, with one short command, or through your AI assistant.
 
 <p align="center">
   <img src="assets/how-it-works.svg" alt="How it works: 1. your audio or video file, 2. Transcribe listens on your own computer, in 30 languages, 3. you get the text, subtitles and word timings" width="100%">
 </p>
 
 > Transcribe is an unofficial kit made by Clipizo. It is not affiliated with or endorsed by Alibaba Cloud or the Qwen team.
+> The official Qwen3-ASR source code is on GitHub: **[QwenLM/Qwen3-ASR](https://github.com/QwenLM/Qwen3-ASR)**.
 > Want AI voiceovers? See the companion kit **[AIvoice](https://github.com/Clipizo/AIvoice)**.
 
 ## What you need
@@ -144,7 +145,7 @@ You don't need administrator rights (`sudo`) for any step. For an NVIDIA graphic
 
 ## The AI models
 
-Transcribe uses the official **Qwen3-ASR** models from the Qwen team. **You don't need to download them yourself:** Transcribe downloads them from [Hugging Face](https://huggingface.co/Qwen) the first time you use it, and keeps them in the `models` folder. Each model downloads only once, and an interrupted download continues where it stopped.
+Transcribe uses the official **Qwen3-ASR** models from the Qwen team. Their source code, technical report and benchmarks are at [github.com/QwenLM/Qwen3-ASR](https://github.com/QwenLM/Qwen3-ASR). **You don't need to download them yourself:** Transcribe downloads them from [Hugging Face](https://huggingface.co/Qwen) the first time you use it, and keeps them in the `models` folder. Each model downloads only once, and an interrupted download continues where it stopped.
 
 | Model | What it's for | Size | Download page |
 |---|---|---|---|
